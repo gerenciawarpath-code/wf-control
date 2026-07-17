@@ -1,0 +1,72 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Fondo y superficies */
+  --color-page: #f7f7f4;
+  --color-card: #ffffff;
+  --color-line: rgba(0, 0, 0, 0.08);
+  --color-line-strong: rgba(0, 0, 0, 0.14);
+
+  /* Texto */
+  --color-ink: #0a0a0a;
+  --color-ink-secondary: #6e6e6a;
+  --color-ink-faint: #9a9a95;
+
+  /* Azul (importancia / primario) */
+  --color-accent: #1466ff;
+  --color-accent-hover: #0f52cc;
+  --color-accent-soft: #eaf1ff;
+
+  /* Apoyo (solo estado) */
+  --color-positive: #16a34a;
+  --color-positive-soft: #e7f6ec;
+  --color-negative: #dc2626;
+  --color-negative-soft: #fdecec;
+  --color-warning: #b45309;
+  --color-warning-soft: #fdf3e3;
+
+  --radius-card: 16px;
+  --radius-control: 10px;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+html {
+  background-color: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Etiqueta tenue en mayúsculas (labels de métricas y tablas) */
+.label-faint {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-weight: 500;
+}
+
+/* Cifra protagonista */
+.figure-hero {
+  font-size: clamp(40px, 6vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* Foco visible siempre: anillo azul tenue */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
