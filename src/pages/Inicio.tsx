@@ -49,7 +49,7 @@ export default function Inicio() {
             <div className="mt-2 text-3xl font-semibold tracking-tight">
               {resumen.pedidos_pendientes}
             </div>
-            <div className="mt-1 text-sm text-ink-faint">por despachar o entregar</div>
+            <div className="mt-1 text-sm text-ink-faint">sin despachar aún</div>
           </Card>
         </Link>
       </div>

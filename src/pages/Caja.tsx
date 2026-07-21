@@ -29,7 +29,8 @@ export default function Caja() {
   const pedidos = useData(getPedidosFull)
   const [mostrarForm, setMostrarForm] = useState(false)
 
-  if (resumen.loading || porMedio.loading || abonos.loading) return <Cargando />
+  if (resumen.loading || porMedio.loading || abonos.loading || pedidos.loading)
+    return <Cargando />
   if (resumen.error || !resumen.data)
     return <ErrorMsg>No se pudo cargar la caja: {resumen.error}</ErrorMsg>
 
