@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
+import { CalendarClock, PartyPopper } from 'lucide-react'
 import { useData } from '../lib/hooks'
 import { getInicio } from '../lib/data'
 import { cop, fmtFecha } from '../lib/format'
 import AsistenteCard from '../components/AsistenteCard'
-import { Card, Cargando, ErrorMsg, Label, Punto, Vacio } from '../components/ui'
+import { Card, CardHero, Cargando, ErrorMsg, Label, Punto, Vacio } from '../components/ui'
 
 export default function Inicio() {
   const { data, loading, error } = useData(getInicio)
@@ -14,13 +15,13 @@ export default function Inicio() {
   const { resumen, atencion, clientesConDeuda, proximosRecompra } = data
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <Card>
+    <div className="entra-lista space-y-4 sm:space-y-6">
+      <CardHero>
         <Label>Caja</Label>
-        <div className="brillo mt-2 inline-block">
-          <div className="figure-hero text-accent">{cop(resumen.caja)}</div>
+        <div className="figure-display shimmer-marca relative mt-3 w-fit">
+          {cop(resumen.caja)}
         </div>
-        <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-sm text-ink-secondary">
+        <div className="relative mt-5 flex flex-wrap gap-x-8 gap-y-2 text-sm text-ink-secondary">
           <span>
             Ganancia repartible{' '}
             <strong className="font-medium text-positive">{cop(resumen.ganancia_repartible)}</strong>
@@ -30,22 +31,24 @@ export default function Inicio() {
             <strong className="font-medium text-ink">{cop(resumen.reponer)}</strong>
           </span>
         </div>
-      </Card>
+      </CardHero>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Link to="/clientes">
-          <Card className="h-full transition-colors duration-150 hover:border-line-strong">
+        <Link to="/clientes" className="block">
+          <Card className="card-interactiva h-full">
             <Label>Te deben</Label>
             <div className="mt-2 text-3xl font-semibold tracking-tight">
               {cop(resumen.te_deben)}
             </div>
             <div className="mt-1 text-sm text-ink-faint">
-              {clientesConDeuda === 1 ? '1 cliente con deuda' : `${clientesConDeuda} clientes con deuda`}
+              {clientesConDeuda === 1
+                ? '1 cliente con deuda'
+                : `${clientesConDeuda} clientes con deuda`}
             </div>
           </Card>
         </Link>
-        <Link to="/pedidos">
-          <Card className="h-full transition-colors duration-150 hover:border-line-strong">
+        <Link to="/pedidos" className="block">
+          <Card className="card-interactiva h-full">
             <Label>Pedidos pendientes</Label>
             <div className="mt-2 text-3xl font-semibold tracking-tight">
               {resumen.pedidos_pendientes}
@@ -60,11 +63,16 @@ export default function Inicio() {
       <Card>
         <h2 className="text-lg font-medium">Requiere atención</h2>
         {atencion.length === 0 ? (
-          <Vacio>Nadie está vencido ni vence hoy. Todo al día.</Vacio>
+          <Vacio
+            icono={<PartyPopper size={32} strokeWidth={1.75} />}
+            detalle="Cuando alguien esté vencido o venza hoy, aparecerá aquí."
+          >
+            Nadie está vencido. Todo al día.
+          </Vacio>
         ) : (
           <ul className="mt-2 divide-y divide-line">
             {atencion.map((a) => (
-              <li key={a.cliente_id + a.tipo} className="flex items-center gap-3 py-3">
+              <li key={a.cliente_id + a.tipo} className="flex items-center gap-3 py-3.5">
                 <Punto tono={a.tipo === 'vencida' ? 'rojo' : 'ambar'} />
                 <div className="min-w-0 flex-1">
                   <Link
@@ -73,7 +81,9 @@ export default function Inicio() {
                   >
                     {a.cliente_nombre}
                   </Link>
-                  <div className={`text-xs ${a.tipo === 'vencida' ? 'text-negative' : 'text-warning'}`}>
+                  <div
+                    className={`text-xs ${a.tipo === 'vencida' ? 'text-negative' : 'text-warning'}`}
+                  >
                     {a.tipo === 'vencida'
                       ? a.dias === 1
                         ? 'vencida hace 1 día'
@@ -91,11 +101,16 @@ export default function Inicio() {
       <Card>
         <h2 className="text-lg font-medium">Próximos a recomprar</h2>
         {proximosRecompra.length === 0 ? (
-          <Vacio>A nadie se le acaba el producto en los próximos 7 días.</Vacio>
+          <Vacio
+            icono={<CalendarClock size={32} strokeWidth={1.75} />}
+            detalle="Cuando a un cliente se le esté acabando el producto, aparecerá aquí."
+          >
+            Nadie recompra en los próximos 7 días.
+          </Vacio>
         ) : (
           <ul className="mt-2 divide-y divide-line">
             {proximosRecompra.map((r) => (
-              <li key={r.cliente_id} className="flex items-center gap-3 py-3">
+              <li key={r.cliente_id} className="flex items-center gap-3 py-3.5">
                 <Punto tono="azul" />
                 <div className="min-w-0 flex-1">
                   <Link
