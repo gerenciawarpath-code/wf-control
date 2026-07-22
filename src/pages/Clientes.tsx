@@ -65,7 +65,7 @@ export default function Clientes() {
                 <input
                   className={inputBase}
                   required
-                  placeholder="Pepito Pérez"
+                  placeholder="Ej: Valentina López"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                 />
@@ -75,7 +75,7 @@ export default function Clientes() {
                 <input
                   className={inputBase}
                   inputMode="tel"
-                  placeholder="3001234567"
+                  placeholder="Ej: 3215695768"
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
                 />

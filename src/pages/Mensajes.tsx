@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { MessageCircle } from 'lucide-react'
 import { useData } from '../lib/hooks'
 import { getClientesDetalle, getInicio } from '../lib/data'
 import type { MotivoMensaje } from '../lib/asistente'
@@ -71,7 +72,12 @@ export default function Mensajes() {
 
       <Card>
         {sugerencias.length === 0 ? (
-          <Vacio>Nadie necesita mensaje hoy. Todo al día.</Vacio>
+          <Vacio
+            icono={<MessageCircle size={32} strokeWidth={1.75} />}
+            detalle="Cuando alguien esté vencido, venza hoy o esté por recomprar, aparecerá aquí."
+          >
+            Nadie necesita mensaje hoy. Todo al día.
+          </Vacio>
         ) : (
           <ul className="divide-y divide-line">
             {sugerencias.map((s) => (

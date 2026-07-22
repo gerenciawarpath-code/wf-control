@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ShoppingBag } from 'lucide-react'
 import { useData } from '../lib/hooks'
 import { getPedidosFull } from '../lib/data'
 import { cop, fmtFecha } from '../lib/format'
@@ -56,8 +57,11 @@ export default function Pedidos() {
         ) : error ? (
           <ErrorMsg>{error}</ErrorMsg>
         ) : visibles.length === 0 ? (
-          <Vacio>
-            {filtro === 'todos' ? 'Aún no hay pedidos. Crea el primero.' : 'No hay pedidos con este filtro.'}
+          <Vacio
+            icono={<ShoppingBag size={32} strokeWidth={1.75} />}
+            detalle={filtro === 'todos' ? 'Cuando registres un pedido, aparecerá aquí.' : undefined}
+          >
+            {filtro === 'todos' ? 'Aún no hay pedidos' : 'No hay pedidos con este filtro'}
           </Vacio>
         ) : (
           <ul className="divide-y divide-line">

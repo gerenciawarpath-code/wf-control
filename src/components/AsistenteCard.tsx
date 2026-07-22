@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Sparkles } from 'lucide-react'
 import { preguntarAsistente } from '../lib/asistente'
 import { Card, ErrorMsg, btnPrimario, inputBase } from './ui'
 
@@ -38,7 +39,10 @@ export default function AsistenteCard() {
 
   return (
     <Card>
-      <h2 className="text-lg font-medium">Asistente</h2>
+      <h2 className="flex items-center gap-2 text-lg font-medium">
+        <Sparkles size={18} strokeWidth={1.75} className="text-accent" />
+        Asistente
+      </h2>
       <p className="mt-1 text-sm text-ink-secondary">
         Pregúntale al negocio; responde con los datos reales.
       </p>

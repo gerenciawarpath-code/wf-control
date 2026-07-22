@@ -26,11 +26,14 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen items-center justify-center px-5">
+      <div className="entra w-full max-w-sm">
         <div className="mb-8 text-center">
+          <div className="mb-4 flex justify-center">
+            <span className="wf-marca wf-marca-grande">WF</span>
+          </div>
           <div className="label-faint mb-2">Warpath Forge</div>
-          <h1 className="text-2xl font-medium tracking-tight">WF Control</h1>
+          <h1 className="titulo-pantalla">WF Control</h1>
         </div>
         <Card>
           <form onSubmit={entrar} className="space-y-4">

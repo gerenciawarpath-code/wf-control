@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Wallet } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import { abrirComprobante, getAbonosFull, getPedidosFull, getResumen } from '../lib/data'
@@ -87,7 +88,12 @@ export default function Caja() {
       <Card>
         <h2 className="text-lg font-medium">Movimientos</h2>
         {(abonos.data ?? []).length === 0 ? (
-          <Vacio>Aún no hay movimientos. La caja arranca de cero.</Vacio>
+          <Vacio
+            icono={<Wallet size={32} strokeWidth={1.75} />}
+            detalle="Cada abono que registres aparecerá aquí con su comprobante."
+          >
+            Aún no hay movimientos.
+          </Vacio>
         ) : (
           <ul className="mt-2 divide-y divide-line">
             {(abonos.data ?? []).map((a) => (
