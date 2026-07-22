@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { diasDesde, hoyISO } from './format'
+import { diasDesde, hoyISO, sumarDias } from './format'
 import type {
   Abono,
   Cliente,
@@ -117,10 +117,19 @@ export interface AtencionItem {
   dias: number
 }
 
+export interface RecompraItem {
+  cliente_id: string
+  cliente_nombre: string
+  fecha: string
+  /** Días que faltan para que se le acabe el producto (0 = hoy) */
+  dias: number
+}
+
 export interface Inicio {
   resumen: ResumenGeneral
   atencion: AtencionItem[]
   clientesConDeuda: number
+  proximosRecompra: RecompraItem[]
 }
 
 export async function getInicio(): Promise<Inicio> {
@@ -172,10 +181,23 @@ export async function getInicio(): Promise<Inicio> {
   }
   atencion.sort((a, b) => (a.tipo === b.tipo ? b.monto - a.monto : a.tipo === 'vencida' ? -1 : 1))
 
+  // Clientes cuyo último producto se acaba en los próximos 7 días
+  const finVentana = sumarDias(hoy, 7)
+  const proximosRecompra: RecompraItem[] = clientes
+    .filter((c) => c.fecha_recompra && c.fecha_recompra >= hoy && c.fecha_recompra <= finVentana)
+    .map((c) => ({
+      cliente_id: c.id,
+      cliente_nombre: c.nombre,
+      fecha: c.fecha_recompra!,
+      dias: -diasDesde(c.fecha_recompra!),
+    }))
+    .sort((a, b) => a.dias - b.dias)
+
   return {
     resumen,
     atencion,
     clientesConDeuda: clientes.filter((c) => c.deuda > 0).length,
+    proximosRecompra,
   }
 }
 

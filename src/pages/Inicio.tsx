@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useData } from '../lib/hooks'
 import { getInicio } from '../lib/data'
-import { cop } from '../lib/format'
+import { cop, fmtFecha } from '../lib/format'
 import { Card, Cargando, ErrorMsg, Label, Punto, Vacio } from '../components/ui'
 
 export default function Inicio() {
@@ -10,7 +10,7 @@ export default function Inicio() {
   if (loading) return <Cargando />
   if (error || !data) return <ErrorMsg>No se pudo cargar el resumen: {error}</ErrorMsg>
 
-  const { resumen, atencion, clientesConDeuda } = data
+  const { resumen, atencion, clientesConDeuda, proximosRecompra } = data
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -79,6 +79,37 @@ export default function Inicio() {
                   </div>
                 </div>
                 <div className="text-sm font-medium">{cop(a.monto)}</div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <Card>
+        <h2 className="text-lg font-medium">Próximos a recomprar</h2>
+        {proximosRecompra.length === 0 ? (
+          <Vacio>A nadie se le acaba el producto en los próximos 7 días.</Vacio>
+        ) : (
+          <ul className="mt-2 divide-y divide-line">
+            {proximosRecompra.map((r) => (
+              <li key={r.cliente_id} className="flex items-center gap-3 py-3">
+                <Punto tono="azul" />
+                <div className="min-w-0 flex-1">
+                  <Link
+                    to={`/clientes/${r.cliente_id}`}
+                    className="text-sm font-medium hover:text-accent"
+                  >
+                    {r.cliente_nombre}
+                  </Link>
+                  <div className="text-xs text-ink-secondary">
+                    {r.dias === 0
+                      ? 'se le acaba hoy'
+                      : r.dias === 1
+                        ? 'se le acaba mañana'
+                        : `se le acaba en ${r.dias} días`}
+                  </div>
+                </div>
+                <div className="text-sm text-ink-faint">{fmtFecha(r.fecha)}</div>
               </li>
             ))}
           </ul>

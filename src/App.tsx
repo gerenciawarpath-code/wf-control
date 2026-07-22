@@ -10,6 +10,7 @@ import PedidoNuevo from './pages/PedidoNuevo'
 import PedidoDetalle from './pages/PedidoDetalle'
 import Caja from './pages/Caja'
 import Productos from './pages/Productos'
+import Kpis from './pages/Kpis'
 
 function Protegido({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth()
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="pedidos/:id" element={<PedidoDetalle />} />
             <Route path="caja" element={<Caja />} />
             <Route path="productos" element={<Productos />} />
+            <Route path="kpis" element={<Kpis />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
