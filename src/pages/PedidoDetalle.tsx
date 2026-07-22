@@ -82,7 +82,7 @@ export default function PedidoDetalle() {
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-medium tracking-tight">
+            <h1 className="titulo-pantalla">
               <Link to={`/clientes/${p.cliente_id}`} className="hover:text-accent">
                 {p.cliente_nombre}
               </Link>

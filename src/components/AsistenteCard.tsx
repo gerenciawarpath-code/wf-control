@@ -59,7 +59,7 @@ export default function AsistenteCard() {
             key={s}
             type="button"
             onClick={() => preguntar(s)}
-            className="rounded-full border border-line bg-card px-3 py-1 text-xs text-ink-secondary transition-colors duration-150 hover:bg-page"
+            className="rounded-full border border-line bg-card px-3 py-1 text-xs text-ink-secondary transition-colors duration-150 hover:bg-card3"
           >
             {s}
           </button>

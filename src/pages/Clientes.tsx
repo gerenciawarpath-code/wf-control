@@ -50,7 +50,7 @@ export default function Clientes() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-medium tracking-tight">Clientes</h1>
+        <h1 className="titulo-pantalla">Clientes</h1>
         <button className={btnPrimario} onClick={() => setMostrarForm(!mostrarForm)}>
           Nuevo cliente
         </button>

@@ -53,7 +53,7 @@ export default function GeneradorMensaje({
               className={`rounded-full px-4 py-1.5 text-sm transition-colors duration-150 ${
                 motivo === m.id
                   ? 'bg-accent-soft font-medium text-accent'
-                  : 'border border-line bg-card text-ink-secondary hover:bg-page'
+                  : 'border border-line bg-card text-ink-secondary hover:bg-card3'
               }`}
             >
               {m.label}

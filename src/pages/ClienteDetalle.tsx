@@ -64,7 +64,7 @@ export default function ClienteDetalle() {
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl font-medium tracking-tight">{c.nombre}</h1>
+            <h1 className="titulo-pantalla">{c.nombre}</h1>
             {c.telefono && (
               <a
                 href={`https://wa.me/57${c.telefono.replace(/\D/g, '')}`}

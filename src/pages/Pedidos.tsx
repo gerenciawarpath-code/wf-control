@@ -28,7 +28,7 @@ export default function Pedidos() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-medium tracking-tight">Pedidos</h1>
+        <h1 className="titulo-pantalla">Pedidos</h1>
         <Link to="/pedidos/nuevo" className={btnPrimario}>
           Nuevo pedido
         </Link>
@@ -42,7 +42,7 @@ export default function Pedidos() {
             className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm transition-colors duration-150 ${
               filtro === f.id
                 ? 'bg-accent-soft font-medium text-accent'
-                : 'border border-line bg-card text-ink-secondary hover:bg-page'
+                : 'border border-line bg-card text-ink-secondary hover:bg-card3'
             }`}
           >
             {f.label}

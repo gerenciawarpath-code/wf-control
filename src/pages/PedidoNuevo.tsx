@@ -172,7 +172,7 @@ export default function PedidoNuevo() {
         <Link to="/pedidos" className="text-sm text-ink-faint hover:text-ink">
           ← Pedidos
         </Link>
-        <h1 className="mt-2 text-xl font-medium tracking-tight">Nuevo pedido</h1>
+        <h1 className="mt-2 titulo-pantalla">Nuevo pedido</h1>
       </div>
 
       <form onSubmit={guardar} className="space-y-4 sm:space-y-6">
@@ -299,7 +299,7 @@ export default function PedidoNuevo() {
                 className={`rounded-full px-4 py-1.5 text-sm transition-colors duration-150 ${
                   tipo === t
                     ? 'bg-accent-soft font-medium text-accent'
-                    : 'border border-line bg-card text-ink-secondary hover:bg-page'
+                    : 'border border-line bg-card text-ink-secondary hover:bg-card3'
                 }`}
               >
                 {t === 'contado' ? 'De contado' : 'A crédito'}
@@ -329,7 +329,7 @@ export default function PedidoNuevo() {
                   <input
                     type="file"
                     accept="image/*,.pdf"
-                    className="block w-full text-sm text-ink-secondary file:mr-3 file:rounded-full file:border file:border-line file:bg-card file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-page"
+                    className="block w-full text-sm text-ink-secondary file:mr-3 file:rounded-full file:border file:border-line file:bg-card file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-card3"
                     onChange={(e) => setComprobante(e.target.files?.[0] ?? null)}
                   />
                 </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/auth'
+import { ThemeProvider } from './lib/theme'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Inicio from './pages/Inicio'
@@ -22,7 +23,8 @@ function Protegido({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -47,7 +49,8 @@ export default function App() {
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

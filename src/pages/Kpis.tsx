@@ -16,7 +16,7 @@ export default function Kpis() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h1 className="text-xl font-medium tracking-tight">KPIs de crecimiento</h1>
+      <h1 className="titulo-pantalla">KPIs de crecimiento</h1>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>

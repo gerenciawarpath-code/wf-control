@@ -47,7 +47,7 @@ export default function Caja() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-medium tracking-tight">Caja</h1>
+        <h1 className="titulo-pantalla">Caja</h1>
         {!mostrarForm && (
           <button className={btnPrimario} onClick={() => setMostrarForm(true)}>
             Registrar abono
