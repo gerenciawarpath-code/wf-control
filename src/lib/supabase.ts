@@ -1,34 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Lee SIEMPRE de import.meta.env (así lo expone Vite). Nunca process.env:
-// en el navegador no existe y rompería la app.
-// .trim() para tolerar un espacio o salto de línea pegado por accidente en Vercel.
-const url = (import.meta.env.VITE_SUPABASE_URL ?? '').trim()
-const key = (import.meta.env.VITE_SUPABASE_ANON_KEY ?? '').trim()
+// Valores públicos de conexión de WF Control.
+// La URL y la clave "publishable" NO son secretas: viajan en el bundle del
+// navegador por diseño y el acceso real lo protege RLS (solo los 3 socios
+// logueados). Se dejan como respaldo para no depender de las variables de
+// entorno de Vercel, que no estaban llegando al build.
+const URL_POR_DEFECTO = 'https://tidyoslnyyetevkxfwzi.supabase.co'
+const KEY_POR_DEFECTO = 'sb_publishable_B6yRW19vQ_lFOsShSABBBg_aiAh2b0F'
 
-/**
- * Si el build no recibió las variables (típico en un deploy sin Environment
- * Variables), mostramos un mensaje claro en vez de una pantalla en blanco.
- */
-export const configOk = url.length > 0 && key.length > 0
-export const configFaltante = [
-  !url && 'VITE_SUPABASE_URL',
-  !key && 'VITE_SUPABASE_ANON_KEY',
-].filter(Boolean) as string[]
+// Usa la variable de entorno si existe; si no, cae al valor por defecto.
+// .trim() por si en Vercel se coló un espacio o salto de línea.
+const url = (import.meta.env.VITE_SUPABASE_URL ?? '').trim() || URL_POR_DEFECTO
+const key = (import.meta.env.VITE_SUPABASE_ANON_KEY ?? '').trim() || KEY_POR_DEFECTO
 
-// Diagnóstico temporal — quitar cuando producción cargue bien.
-// (La clave anon es pública por diseño; no hay secreto expuesto aquí.)
-if (!configOk) {
-  console.log('[WF Control] Diagnóstico Supabase:', {
-    url_presente: Boolean(url),
-    url_valor: url,
-    key_presente: Boolean(key),
-    key_largo: key.length,
-    modo: import.meta.env.MODE,
-  })
-}
-
-// Usar || (no ??) para que un valor vacío TAMBIÉN caiga al placeholder:
-// así createClient nunca recibe '' y nunca lanza "supabaseUrl is required"
-// al cargar el módulo. La app entonces alcanza a mostrar la pantalla de aviso.
-export const supabase = createClient(url || 'http://placeholder.invalid', key || 'placeholder')
+export const supabase = createClient(url, key)
