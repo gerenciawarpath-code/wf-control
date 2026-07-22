@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useData } from '../lib/hooks'
 import { getInicio } from '../lib/data'
 import { cop, fmtFecha } from '../lib/format'
+import AsistenteCard from '../components/AsistenteCard'
 import { Card, Cargando, ErrorMsg, Label, Punto, Vacio } from '../components/ui'
 
 export default function Inicio() {
@@ -53,6 +54,8 @@ export default function Inicio() {
           </Card>
         </Link>
       </div>
+
+      <AsistenteCard />
 
       <Card>
         <h2 className="text-lg font-medium">Requiere atención</h2>

@@ -5,6 +5,7 @@ import { useData } from '../lib/hooks'
 import { getPedidosFull } from '../lib/data'
 import { cop, fmtFechaLarga } from '../lib/format'
 import type { ClienteDetalle as TCliente } from '../lib/types'
+import GeneradorMensaje from '../components/GeneradorMensaje'
 import {
   Badge,
   Card,
@@ -149,6 +150,14 @@ export default function ClienteDetalle() {
           <div className="mt-1 text-sm text-ink-faint">según su último producto</div>
         </Card>
       </div>
+
+      <Card>
+        <h2 className="text-lg font-medium">Mensaje de WhatsApp</h2>
+        <p className="mb-3 mt-1 text-sm text-ink-secondary">
+          La IA redacta un mensaje con los datos de {c.nombre}; tú lo revisas y lo envías.
+        </p>
+        <GeneradorMensaje clienteId={c.id} telefono={c.telefono} />
+      </Card>
 
       <Card>
         <h2 className="text-lg font-medium">Historial de pedidos</h2>

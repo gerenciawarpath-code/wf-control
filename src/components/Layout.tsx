@@ -9,6 +9,7 @@ const tabs = [
   { to: '/caja', label: 'Caja' },
   { to: '/productos', label: 'Productos' },
   { to: '/kpis', label: 'KPIs' },
+  { to: '/mensajes', label: 'Mensajes' },
 ]
 
 export default function Layout() {
