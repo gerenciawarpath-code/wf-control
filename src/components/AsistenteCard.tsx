@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Sparkles } from 'lucide-react'
-import { preguntarAsistente } from '../lib/asistente'
+import { preguntarAsistente, type RespuestaAsistente as TResp } from '../lib/asistente'
 import { Card, ErrorMsg, btnPrimario, inputBase } from './ui'
+import RespuestaAsistente from './RespuestaAsistente'
 
 const sugerencias = [
   '¿Quién paga hoy?',
@@ -12,7 +13,7 @@ const sugerencias = [
 
 export default function AsistenteCard() {
   const [pregunta, setPregunta] = useState('')
-  const [respuesta, setRespuesta] = useState<string | null>(null)
+  const [respuesta, setRespuesta] = useState<TResp | null>(null)
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -74,11 +75,7 @@ export default function AsistenteCard() {
           <ErrorMsg>{error}</ErrorMsg>
         </div>
       )}
-      {respuesta && (
-        <div className="mt-4 whitespace-pre-wrap rounded-control bg-page px-4 py-3 text-sm leading-relaxed">
-          {respuesta}
-        </div>
-      )}
+      {respuesta && <RespuestaAsistente respuesta={respuesta} />}
     </Card>
   )
 }

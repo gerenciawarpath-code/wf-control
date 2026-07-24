@@ -134,6 +134,33 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
+/* El header y la página nunca muestran scroll horizontal, en ninguna resolución */
+body {
+  overflow-x: hidden;
+}
+header nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+header nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Drawer del menú (pantallas medianas y móviles) */
+.drawer-menu {
+  animation: drawer-baja 250ms var(--ease-out) both;
+}
+@keyframes drawer-baja {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Transición suave al cambiar de modo claro/oscuro */
 *,
 *::before,
