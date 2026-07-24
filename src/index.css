@@ -31,7 +31,7 @@
   /* Marca */
   --brand-tint: #eaf1ff;
   --halo: rgba(20, 102, 255, 0.15);
-  --gradient-hero: linear-gradient(135deg, #eaf1ff 0%, #f7f7f4 100%);
+  --gradient-hero: linear-gradient(135deg, #e2eeff 0%, #ffffff 100%);
 
   /* Estados */
   --success-fg: #16a34a;
@@ -52,10 +52,12 @@
 }
 
 :root[data-theme='dark'] {
-  --bg-page: #0a0b0f;
-  --surface-1: #14151b;
-  --surface-2: #1a1b23;
-  --surface-3: #22232d;
+  /* Negro profundo con matiz azul apenas perceptible; cards más oscuras
+     para que el azul brille por contraste */
+  --bg-page: #050608;
+  --surface-1: #0f1015;
+  --surface-2: #15161d;
+  --surface-3: #1c1d25;
 
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: rgba(255, 255, 255, 0.1);
@@ -68,8 +70,8 @@
   --text-quaternary: #46464a;
 
   --brand-tint: rgba(77, 166, 255, 0.12);
-  --halo: rgba(77, 166, 255, 0.18);
-  --gradient-hero: linear-gradient(135deg, rgba(20, 102, 255, 0.08) 0%, rgba(10, 11, 15, 1) 100%);
+  --halo: rgba(77, 166, 255, 0.35);
+  --gradient-hero: linear-gradient(135deg, rgba(20, 102, 255, 0.16) 0%, rgba(15, 16, 21, 1) 65%);
 
   --success-fg: #4ade80;
   --success-bg: rgba(74, 222, 128, 0.14);
@@ -169,27 +171,11 @@ html {
 
 /* ===== Marca ===== */
 
-.wf-marca {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-image: linear-gradient(135deg, #1466ff 0%, #0052e0 100%);
-  color: #fff;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  border-radius: 7px;
-  width: 24px;
-  height: 24px;
-  font-size: 10px;
+/* Logo WF forjado: letras en gradiente con brillo, bordes afilados */
+.wf-logo {
+  overflow: visible;
   flex-shrink: 0;
-}
-
-.wf-marca-grande {
-  width: 64px;
-  height: 64px;
-  font-size: 26px;
-  border-radius: 16px;
-  box-shadow: var(--shadow-glow-blue);
+  filter: drop-shadow(0 0 12px rgba(20, 102, 255, 0.5));
 }
 
 /* Shimmer de marca: solo UNA cifra por vista (firma, no efecto) */
@@ -205,6 +191,18 @@ html {
   background-clip: text;
   color: transparent;
   animation: shimmer-sweep 3s linear infinite;
+}
+
+/* En oscuro la cifra se vuelve eléctrica: azul brillante con brillo blanco */
+:root[data-theme='dark'] .shimmer-marca {
+  background-image: linear-gradient(
+    100deg,
+    #4da6ff 30%,
+    #d9ecff 50%,
+    #4da6ff 70%
+  );
+  background-size: 200% 100%;
+  filter: drop-shadow(0 0 18px rgba(77, 166, 255, 0.45));
 }
 
 @keyframes shimmer-sweep {
@@ -336,10 +334,10 @@ html {
 .card-hero::before {
   content: '';
   position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 240px;
-  height: 240px;
+  top: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
   background: radial-gradient(circle, var(--halo), transparent 70%);
   filter: blur(40px);
   pointer-events: none;

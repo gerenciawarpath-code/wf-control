@@ -15,7 +15,7 @@ export default function Kpis() {
   if (error || !data) return <ErrorMsg>No se pudieron cargar los KPIs: {error}</ErrorMsg>
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="entra-lista space-y-4 sm:space-y-6">
       <h1 className="titulo-pantalla">KPIs de crecimiento</h1>
 
       <div className="grid gap-4 sm:grid-cols-3">

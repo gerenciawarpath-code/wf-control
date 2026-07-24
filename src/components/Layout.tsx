@@ -15,6 +15,7 @@ import {
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useTema } from '../lib/theme'
+import LogoWF from './LogoWF'
 
 const tabs: { to: string; label: string; icono: LucideIcon }[] = [
   { to: '/', label: 'Inicio', icono: LayoutDashboard },
@@ -34,8 +35,8 @@ export default function Layout() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-10 border-b border-line bg-page/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-3 px-5 sm:gap-4 sm:px-12">
-          <span className="flex shrink-0 items-center gap-2">
-            <span className="wf-marca">WF</span>
+          <span className="flex shrink-0 items-center gap-2.5">
+            <LogoWF altura={18} />
             <span className="hidden text-[15px] font-medium tracking-tight md:block">
               WF Control
             </span>

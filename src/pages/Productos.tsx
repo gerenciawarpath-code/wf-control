@@ -68,7 +68,7 @@ export default function Productos() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="entra-lista space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="titulo-pantalla">Productos</h1>
         {!editando && (

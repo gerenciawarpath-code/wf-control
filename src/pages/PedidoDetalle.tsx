@@ -75,7 +75,7 @@ export default function PedidoDetalle() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="entra-lista space-y-4 sm:space-y-6">
       <div>
         <Link to="/pedidos" className="text-sm text-ink-faint hover:text-ink">
           ← Pedidos

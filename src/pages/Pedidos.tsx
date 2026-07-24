@@ -27,7 +27,7 @@ export default function Pedidos() {
   })
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="entra-lista space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="titulo-pantalla">Pedidos</h1>
         <Link to="/pedidos/nuevo" className={btnPrimario}>

@@ -167,7 +167,7 @@ export default function PedidoNuevo() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="entra-lista space-y-4 sm:space-y-6">
       <div>
         <Link to="/pedidos" className="text-sm text-ink-faint hover:text-ink">
           ← Pedidos
@@ -175,7 +175,7 @@ export default function PedidoNuevo() {
         <h1 className="mt-2 titulo-pantalla">Nuevo pedido</h1>
       </div>
 
-      <form onSubmit={guardar} className="space-y-4 sm:space-y-6">
+      <form onSubmit={guardar} className="entra-lista space-y-4 sm:space-y-6">
         <Card>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>

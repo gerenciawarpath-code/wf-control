@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { Card, ErrorMsg, btnPrimario, inputBase } from '../components/ui'
+import LogoWF from '../components/LogoWF'
 
 export default function Login() {
   const { session, loading } = useAuth()
@@ -29,8 +30,8 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center px-5">
       <div className="entra w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mb-4 flex justify-center">
-            <span className="wf-marca wf-marca-grande">WF</span>
+          <div className="mb-5 flex justify-center">
+            <LogoWF altura={48} />
           </div>
           <div className="label-faint mb-2">Warpath Forge</div>
           <h1 className="titulo-pantalla">WF Control</h1>

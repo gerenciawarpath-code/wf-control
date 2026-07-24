@@ -61,7 +61,7 @@ export default function Mensajes() {
   ]
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="entra-lista space-y-4 sm:space-y-6">
       <div>
         <h1 className="titulo-pantalla">Mensajes</h1>
         <p className="mt-1 text-sm text-ink-secondary">
