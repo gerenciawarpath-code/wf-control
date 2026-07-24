@@ -2,9 +2,12 @@ import { useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import { getProductos } from '../lib/data'
+import { eliminarProducto, toggleProductoActivo } from '../lib/mutations'
 import { cop } from '../lib/format'
 import type { Producto } from '../lib/types'
+import { ConfirmDialog } from '../components/Modal'
 import {
+  Badge,
   Card,
   Cargando,
   ErrorMsg,
@@ -24,8 +27,14 @@ export default function Productos() {
   const [duracion, setDuracion] = useState(30)
   const [guardando, setGuardando] = useState(false)
   const [errorForm, setErrorForm] = useState<string | null>(null)
+  const [borrar, setBorrar] = useState<Producto | null>(null)
 
   const ganancia = precio - costo
+
+  async function cambiarActivo(p: Producto) {
+    await toggleProductoActivo(p.id, !p.activo)
+    reload()
+  }
 
   function abrirForm(p: Producto | 'nuevo') {
     setEditando(p)
@@ -151,12 +160,13 @@ export default function Productos() {
                   <th className="label-faint py-2 pr-4 text-right font-medium">Precio</th>
                   <th className="label-faint py-2 pr-4 text-right font-medium">Ganancia</th>
                   <th className="label-faint py-2 pr-4 text-right font-medium">Duración</th>
+                  <th className="label-faint py-2 pr-4 font-medium">Estado</th>
                   <th className="py-2" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
                 {(data ?? []).map((p) => (
-                  <tr key={p.id}>
+                  <tr key={p.id} className={p.activo ? '' : 'opacity-60'}>
                     <td className="py-3 pr-4 font-medium">{p.nombre}</td>
                     <td className="py-3 pr-4 text-right">{cop(p.costo)}</td>
                     <td className="py-3 pr-4 text-right">{cop(p.precio_venta)}</td>
@@ -166,13 +176,29 @@ export default function Productos() {
                     <td className="py-3 pr-4 text-right text-ink-secondary">
                       {p.duracion_dias} días
                     </td>
-                    <td className="py-3 text-right">
-                      <button
-                        className="text-sm text-accent hover:text-accent-hover"
-                        onClick={() => abrirForm(p)}
-                      >
-                        Editar
-                      </button>
+                    <td className="py-3 pr-4">
+                      <Badge tono={p.activo ? 'verde' : 'neutro'}>
+                        {p.activo ? 'activo' : 'inactivo'}
+                      </Badge>
+                    </td>
+                    <td className="py-3">
+                      <div className="flex justify-end gap-3 whitespace-nowrap">
+                        <button
+                          className="text-sm text-accent hover:text-accent-hover"
+                          onClick={() => abrirForm(p)}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="text-sm text-ink-secondary hover:text-ink"
+                          onClick={() => cambiarActivo(p)}
+                        >
+                          {p.activo ? 'Desactivar' : 'Activar'}
+                        </button>
+                        <button className="link-peligro" onClick={() => setBorrar(p)}>
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -181,6 +207,25 @@ export default function Productos() {
           </div>
         )}
       </Card>
+
+      {borrar && (
+        <ConfirmDialog
+          titulo={`Eliminar ${borrar.nombre}`}
+          mensaje={
+            <>
+              ¿Seguro que quieres eliminar <strong>{borrar.nombre}</strong>? Si ya se usó en algún
+              pedido no se podrá borrar; en ese caso, desactívalo.
+            </>
+          }
+          textoConfirmar="Eliminar producto"
+          onCancelar={() => setBorrar(null)}
+          onConfirmar={async () => {
+            await eliminarProducto(borrar.id)
+            setBorrar(null)
+            reload()
+          }}
+        />
+      )}
     </div>
   )
 }

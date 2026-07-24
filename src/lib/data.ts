@@ -216,3 +216,21 @@ export async function abrirComprobante(path: string) {
   if (error || !data) throw new Error('No se pudo abrir el comprobante')
   window.open(data.signedUrl, '_blank')
 }
+
+/* ---------- Auditoría ---------- */
+
+export interface AuditoriaFila {
+  id: string
+  tabla: string
+  registro_id: string
+  accion: 'editar' | 'eliminar'
+  fecha: string
+  socio_nombre: string | null
+  datos_anteriores: Record<string, unknown> | null
+}
+
+export async function getAuditoria(): Promise<AuditoriaFila[]> {
+  return check(
+    await supabase.from('auditoria_detalle').select('*').limit(100).returns<AuditoriaFila[]>(),
+  )
+}

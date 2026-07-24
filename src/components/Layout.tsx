@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import {
+  History,
   LayoutDashboard,
   LogOut,
   MessageCircle,
@@ -25,6 +26,7 @@ const tabs: { to: string; label: string; icono: LucideIcon }[] = [
   { to: '/productos', label: 'Productos', icono: Package },
   { to: '/kpis', label: 'KPIs', icono: TrendingUp },
   { to: '/mensajes', label: 'Mensajes', icono: MessageCircle },
+  { to: '/auditoria', label: 'Historial', icono: History },
 ]
 
 export default function Layout() {

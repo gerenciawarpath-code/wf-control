@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import { getPedidosFull } from '../lib/data'
+import { eliminarCliente } from '../lib/mutations'
 import { cop, fmtFechaLarga } from '../lib/format'
 import type { ClienteDetalle as TCliente } from '../lib/types'
 import GeneradorMensaje from '../components/GeneradorMensaje'
+import { ConfirmDialog } from '../components/Modal'
 import {
   Badge,
   Card,
@@ -27,12 +29,14 @@ async function getCliente(id: string): Promise<TCliente> {
 
 export default function ClienteDetalle() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const cliente = useData(() => getCliente(id!), [id])
   const pedidos = useData(getPedidosFull)
   const [editando, setEditando] = useState(false)
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [errorForm, setErrorForm] = useState<string | null>(null)
+  const [confirmarBorrar, setConfirmarBorrar] = useState(false)
 
   if (cliente.loading) return <Cargando />
   if (cliente.error || !cliente.data)
@@ -192,6 +196,45 @@ export default function ClienteDetalle() {
           </ul>
         )}
       </Card>
+
+      <Card>
+        <h2 className="text-lg font-medium">Eliminar cliente</h2>
+        {susPedidos.length > 0 ? (
+          <p className="mt-2 text-sm text-ink-secondary">
+            No se puede eliminar: tiene {susPedidos.length}{' '}
+            {susPedidos.length === 1 ? 'pedido' : 'pedidos'}. Elimina o transfiere sus pedidos
+            primero.
+          </p>
+        ) : (
+          <>
+            <p className="mt-2 text-sm text-ink-secondary">
+              Este cliente no tiene pedidos, así que se puede eliminar. La acción no se puede
+              deshacer, pero queda registrada en el historial.
+            </p>
+            <button className="btn-peligro mt-4" onClick={() => setConfirmarBorrar(true)}>
+              Eliminar cliente
+            </button>
+          </>
+        )}
+      </Card>
+
+      {confirmarBorrar && (
+        <ConfirmDialog
+          titulo={`Eliminar a ${c.nombre}`}
+          mensaje={
+            <>
+              ¿Seguro que quieres eliminar a <strong>{c.nombre}</strong>? Esta acción no se puede
+              deshacer.
+            </>
+          }
+          textoConfirmar="Eliminar cliente"
+          onCancelar={() => setConfirmarBorrar(false)}
+          onConfirmar={async () => {
+            await eliminarCliente(c.id)
+            navigate('/clientes')
+          }}
+        />
+      )}
     </div>
   )
 }
