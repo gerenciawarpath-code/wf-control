@@ -40,20 +40,27 @@ export interface Kpis {
   proyectadoSemana: number
   proyectadoMes: number
   vencidoPendiente: number
+  invertidoComprasMes: number
   meses: MesKpi[]
 }
 
 export async function getKpis(): Promise<Kpis> {
-  const [totalesRes, clientes, cuotas] = await Promise.all([
+  const [totalesRes, clientes, cuotas, comprasRes] = await Promise.all([
     supabase.from('pedido_totales').select('*'),
     getClientes(),
     getCuotasDetalle(),
+    supabase.from('compra_totales').select('fecha, total'),
   ])
   if (totalesRes.error) throw new Error(totalesRes.error.message)
   const totales = (totalesRes.data ?? []) as PedidoTotales[]
+  const compras = (comprasRes.data ?? []) as { fecha: string; total: number }[]
 
   const hoy = hoyISO()
   const mesActual = mesKey(hoy)
+
+  const invertidoComprasMes = compras
+    .filter((c) => mesKey(c.fecha) === mesActual)
+    .reduce((s, c) => s + c.total, 0)
 
   // Ventas por mes (valor total de los pedidos, por fecha del pedido)
   const ventasPorMes = new Map<string, number>()
@@ -108,6 +115,7 @@ export async function getKpis(): Promise<Kpis> {
     proyectadoSemana,
     proyectadoMes,
     vencidoPendiente,
+    invertidoComprasMes,
     meses,
   }
 }

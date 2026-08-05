@@ -6,6 +6,7 @@ import { useData } from '../lib/hooks'
 import { getClientes, getProductos, getSocios, subirComprobante } from '../lib/data'
 import { cop, hoyISO, sumarDias } from '../lib/format'
 import type { Medio, TipoPedido } from '../lib/types'
+import ProductoThumb from '../components/ProductoThumb'
 import {
   Card,
   Cargando,
@@ -233,6 +234,10 @@ export default function PedidoNuevo() {
             <div className="mt-3 space-y-3">
               {items.map((it, idx) => (
                 <div key={idx} className="flex flex-wrap items-end gap-3">
+                  <ProductoThumb
+                    url={listaProductos.find((p) => p.id === it.productoId)?.foto_url}
+                    size={44}
+                  />
                   <div className="min-w-40 flex-1">
                     {idx === 0 && <label className="label-faint mb-1.5 block">Producto</label>}
                     <select

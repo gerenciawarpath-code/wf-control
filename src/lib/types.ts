@@ -22,6 +22,35 @@ export interface Producto {
   precio_venta: number
   duracion_dias: number
   activo: boolean
+  foto_url: string | null
+}
+
+export interface Proveedor {
+  id: string
+  nombre: string
+  telefono: string | null
+  activo: boolean
+}
+
+export interface Compra {
+  id: string
+  proveedor_id: string
+  fecha: string
+  medio: Medio
+  comprobante_url: string | null
+  pedido_id: string | null
+  registrado_por: string | null
+  nota: string | null
+  es_ajuste: boolean
+}
+
+export interface CompraItem {
+  id: string
+  compra_id: string
+  producto_id: string | null
+  cantidad: number
+  costo_unitario: number
+  costo_total: number
 }
 
 export interface Pedido {
@@ -76,6 +105,7 @@ export interface PedidoTotales {
   saldo: number
   costo_recuperado: number
   ganancia_realizada: number
+  tiene_compra: boolean
 }
 
 export interface CuotaDetalle {
@@ -94,6 +124,9 @@ export interface ResumenGeneral {
   te_deben: number
   pedidos_con_deuda: number
   pedidos_pendientes: number
+  compras_total: number
+  comprometido_comprar: number
+  pedidos_sin_compra: number
 }
 
 export interface ClienteDetalle {

@@ -18,13 +18,20 @@ export default function Kpis() {
     <div className="entra-lista space-y-4 sm:space-y-6">
       <h1 className="titulo-pantalla">KPIs de crecimiento</h1>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <Label>Ventas este mes</Label>
           <div className="mt-2 text-3xl font-semibold tracking-tight text-accent">
             {cop(data.ventasMesActual)}
           </div>
           <div className="mt-1 text-sm text-ink-faint">valor de los pedidos del mes</div>
+        </Card>
+        <Card>
+          <Label>Invertido en compras este mes</Label>
+          <div className="mt-2 text-3xl font-semibold tracking-tight text-negative">
+            {cop(data.invertidoComprasMes)}
+          </div>
+          <div className="mt-1 text-sm text-ink-faint">pagado a proveedores</div>
         </Card>
         <Card>
           <Label>Crecimiento vs mes pasado</Label>

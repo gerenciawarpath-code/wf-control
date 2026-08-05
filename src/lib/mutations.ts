@@ -172,3 +172,70 @@ export async function actualizarAbono(
 export async function eliminarAbono(abonoId: string): Promise<void> {
   ok((await supabase.from('abonos').delete().eq('id', abonoId)).error)
 }
+
+/* ---------- Compras ---------- */
+
+export interface CompraItemInput {
+  producto_id: string
+  cantidad: number
+  costo_unitario: number
+}
+
+export interface CompraCabecera {
+  proveedor_id: string
+  fecha: string
+  medio: Medio
+  pedido_id: string | null
+  nota: string | null
+  comprobante_url: string | null
+}
+
+async function insertarItems(compraId: string, items: CompraItemInput[]) {
+  ok(
+    (
+      await supabase.from('compra_items').insert(
+        items.map((it) => ({
+          compra_id: compraId,
+          producto_id: it.producto_id,
+          cantidad: it.cantidad,
+          costo_unitario: it.costo_unitario,
+        })),
+      )
+    ).error,
+  )
+}
+
+export async function crearCompra(
+  cabecera: CompraCabecera & { registrado_por: string },
+  items: CompraItemInput[],
+): Promise<string> {
+  const { data, error } = await supabase
+    .from('compras')
+    .insert(cabecera)
+    .select('id')
+    .single()
+  if (error || !data) throw new Error(error?.message ?? 'No se pudo crear la compra')
+  try {
+    await insertarItems(data.id, items)
+  } catch (e) {
+    // Si fallan los renglones, no dejar una compra vacía
+    await supabase.from('compras').delete().eq('id', data.id)
+    throw e
+  }
+  return data.id
+}
+
+export async function actualizarCompra(
+  compraId: string,
+  cabecera: CompraCabecera,
+  items: CompraItemInput[],
+): Promise<void> {
+  ok((await supabase.from('compras').update(cabecera).eq('id', compraId)).error)
+  ok((await supabase.from('compra_items').delete().eq('compra_id', compraId)).error)
+  await insertarItems(compraId, items)
+}
+
+export async function eliminarCompra(compraId: string): Promise<void> {
+  // La cascada borra los renglones; el trigger audita.
+  ok((await supabase.from('compras').delete().eq('id', compraId)).error)
+}

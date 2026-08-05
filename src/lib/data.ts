@@ -4,10 +4,13 @@ import type {
   Abono,
   Cliente,
   ClienteDetalle,
+  CompraItem,
   CuotaDetalle,
   EstadoCuota,
+  Medio,
   PedidoTotales,
   Producto,
+  Proveedor,
   ResumenGeneral,
   Socio,
 } from './types'
@@ -215,6 +218,134 @@ export async function abrirComprobante(path: string) {
   const { data, error } = await supabase.storage.from('comprobantes').createSignedUrl(path, 600)
   if (error || !data) throw new Error('No se pudo abrir el comprobante')
   window.open(data.signedUrl, '_blank')
+}
+
+/* ---------- Fotos de productos ---------- */
+
+/** Redimensiona a máx 800x800 y comprime a JPEG 85% antes de subir. */
+function redimensionar(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      const max = 800
+      let { width, height } = img
+      if (width > max || height > max) {
+        const escala = Math.min(max / width, max / height)
+        width = Math.round(width * escala)
+        height = Math.round(height * escala)
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return reject(new Error('No se pudo procesar la imagen'))
+      ctx.drawImage(img, 0, 0, width, height)
+      canvas.toBlob(
+        (blob) => (blob ? resolve(blob) : reject(new Error('No se pudo comprimir la imagen'))),
+        'image/jpeg',
+        0.85,
+      )
+    }
+    img.onerror = () => reject(new Error('No se pudo leer la imagen'))
+    img.src = URL.createObjectURL(file)
+  })
+}
+
+/** Sube la foto de un producto al bucket público y devuelve su URL pública. */
+export async function subirFotoProducto(file: File): Promise<string> {
+  const blob = await redimensionar(file)
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`
+  const { error } = await supabase.storage
+    .from('productos')
+    .upload(path, blob, { contentType: 'image/jpeg' })
+  if (error) throw new Error('No se pudo subir la foto: ' + error.message)
+  return supabase.storage.from('productos').getPublicUrl(path).data.publicUrl
+}
+
+/* ---------- Proveedores y compras ---------- */
+
+export async function getProveedores(): Promise<Proveedor[]> {
+  return check(
+    await supabase.from('proveedores').select('*').order('nombre').returns<Proveedor[]>(),
+  )
+}
+
+export async function crearProveedor(nombre: string, telefono?: string): Promise<Proveedor> {
+  const { data, error } = await supabase
+    .from('proveedores')
+    .insert({ nombre: nombre.trim(), telefono: telefono?.trim() || null })
+    .select('*')
+    .single()
+  if (error) throw new Error(error.message)
+  return data as Proveedor
+}
+
+export interface CompraFull {
+  id: string
+  fecha: string
+  medio: Medio
+  proveedor_id: string
+  proveedor_nombre: string
+  pedido_id: string | null
+  cliente_nombre: string | null
+  es_ajuste: boolean
+  nota: string | null
+  comprobante_url: string | null
+  total: number
+}
+
+interface CompraJoin {
+  id: string
+  fecha: string
+  medio: Medio
+  proveedor_id: string
+  pedido_id: string | null
+  es_ajuste: boolean
+  nota: string | null
+  comprobante_url: string | null
+  proveedores: { nombre: string } | null
+  pedidos: { clientes: { nombre: string } | null } | null
+}
+
+export async function getComprasFull(): Promise<CompraFull[]> {
+  const [compras, totales] = await Promise.all([
+    supabase
+      .from('compras')
+      .select('*, proveedores(nombre), pedidos(clientes(nombre))')
+      .order('fecha', { ascending: false })
+      .order('created_at', { ascending: false }),
+    supabase.from('compra_totales').select('compra_id, total'),
+  ])
+  const filas = check(compras) as unknown as CompraJoin[]
+  const mapaTotal = new Map(
+    (check(totales) as { compra_id: string; total: number }[]).map((t) => [t.compra_id, t.total]),
+  )
+  return filas.map((c) => ({
+    id: c.id,
+    fecha: c.fecha,
+    medio: c.medio,
+    proveedor_id: c.proveedor_id,
+    proveedor_nombre: c.proveedores?.nombre ?? '—',
+    pedido_id: c.pedido_id,
+    cliente_nombre: c.pedidos?.clientes?.nombre ?? null,
+    es_ajuste: c.es_ajuste,
+    nota: c.nota,
+    comprobante_url: c.comprobante_url,
+    total: mapaTotal.get(c.id) ?? 0,
+  }))
+}
+
+interface CompraItemJoin extends CompraItem {
+  productos: { nombre: string; foto_url: string | null } | null
+}
+
+export async function getCompraItems(compraId: string): Promise<CompraItemJoin[]> {
+  const { data, error } = await supabase
+    .from('compra_items')
+    .select('*, productos(nombre, foto_url)')
+    .eq('compra_id', compraId)
+  if (error) throw new Error(error.message)
+  return data as unknown as CompraItemJoin[]
 }
 
 /* ---------- Auditoría ---------- */

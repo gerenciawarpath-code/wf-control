@@ -121,13 +121,26 @@ export default function PedidoDetalle() {
               <Badge tono={tonoTipoPedido[p.tipo]}>
                 {p.tipo === 'credito' ? 'crédito' : 'contado'}
               </Badge>
+              <Badge tono={p.tiene_compra ? 'verde' : 'ambar'}>
+                {p.tiene_compra ? 'producto comprado' : 'pendiente comprar'}
+              </Badge>
               <span className="text-sm text-ink-faint">· tomado por {p.socio_nombre}</span>
             </div>
           </div>
           {!editCabecera && (
-            <button className={btnSecundario} onClick={() => setEditCabecera(true)}>
-              Editar pedido
-            </button>
+            <div className="flex flex-wrap gap-2">
+              {!p.tiene_compra && (
+                <button
+                  className={btnSecundario}
+                  onClick={() => navigate(`/compras/nueva?pedido=${p.pedido_id}`)}
+                >
+                  Registrar compra
+                </button>
+              )}
+              <button className={btnSecundario} onClick={() => setEditCabecera(true)}>
+                Editar pedido
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -79,6 +79,9 @@ export default function Pedidos() {
                       <Badge tono={tonoTipoPedido[p.tipo]}>
                         {p.tipo === 'credito' ? 'crédito' : 'contado'}
                       </Badge>
+                      <Badge tono={p.tiene_compra ? 'verde' : 'ambar'}>
+                        {p.tiene_compra ? 'comprado' : 'pendiente comprar'}
+                      </Badge>
                     </div>
                   </div>
                   <div className="text-right">

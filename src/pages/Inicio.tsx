@@ -33,7 +33,7 @@ export default function Inicio() {
         </div>
       </CardHero>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Link to="/clientes" className="block">
           <Card className="card-interactiva h-full">
             <Label>Te deben</Label>
@@ -44,6 +44,19 @@ export default function Inicio() {
               {clientesConDeuda === 1
                 ? '1 cliente con deuda'
                 : `${clientesConDeuda} clientes con deuda`}
+            </div>
+          </Card>
+        </Link>
+        <Link to="/compras" className="block">
+          <Card className="card-interactiva h-full">
+            <Label>Comprometido para comprar</Label>
+            <div className="mt-2 text-3xl font-semibold tracking-tight">
+              {cop(resumen.comprometido_comprar)}
+            </div>
+            <div className="mt-1 text-sm text-ink-faint">
+              {resumen.pedidos_sin_compra === 1
+                ? '1 pedido sin compra registrada'
+                : `${resumen.pedidos_sin_compra} pedidos sin compra registrada`}
             </div>
           </Card>
         </Link>

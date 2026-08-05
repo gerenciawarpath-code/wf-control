@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
-import { getProductos } from '../lib/data'
+import { getProductos, subirFotoProducto } from '../lib/data'
 import { eliminarProducto, toggleProductoActivo } from '../lib/mutations'
 import { cop } from '../lib/format'
 import type { Producto } from '../lib/types'
 import { ConfirmDialog } from '../components/Modal'
+import ProductoThumb from '../components/ProductoThumb'
 import {
   Badge,
   Card,
@@ -25,11 +26,14 @@ export default function Productos() {
   const [costo, setCosto] = useState(0)
   const [precio, setPrecio] = useState(0)
   const [duracion, setDuracion] = useState(30)
+  const [fotoActual, setFotoActual] = useState<string | null>(null)
+  const [fotoNueva, setFotoNueva] = useState<File | null>(null)
   const [guardando, setGuardando] = useState(false)
   const [errorForm, setErrorForm] = useState<string | null>(null)
   const [borrar, setBorrar] = useState<Producto | null>(null)
 
   const ganancia = precio - costo
+  const previewFoto = fotoNueva ? URL.createObjectURL(fotoNueva) : fotoActual
 
   async function cambiarActivo(p: Producto) {
     await toggleProductoActivo(p.id, !p.activo)
@@ -39,16 +43,19 @@ export default function Productos() {
   function abrirForm(p: Producto | 'nuevo') {
     setEditando(p)
     setErrorForm(null)
+    setFotoNueva(null)
     if (p === 'nuevo') {
       setNombre('')
       setCosto(0)
       setPrecio(0)
       setDuracion(30)
+      setFotoActual(null)
     } else {
       setNombre(p.nombre)
       setCosto(p.costo)
       setPrecio(p.precio_venta)
       setDuracion(p.duracion_dias)
+      setFotoActual(p.foto_url)
     }
   }
 
@@ -57,21 +64,27 @@ export default function Productos() {
     setErrorForm(null)
     if (duracion <= 0) return setErrorForm('La duración debe ser mayor a cero días.')
     setGuardando(true)
-    const valores = {
-      nombre: nombre.trim(),
-      costo,
-      precio_venta: precio,
-      duracion_dias: duracion,
-    }
-    const { error } =
-      editando === 'nuevo'
-        ? await supabase.from('productos').insert(valores)
-        : await supabase.from('productos').update(valores).eq('id', (editando as Producto).id)
-    setGuardando(false)
-    if (error) {
-      setErrorForm(error.message)
+    try {
+      let fotoUrl = fotoActual
+      if (fotoNueva) fotoUrl = await subirFotoProducto(fotoNueva)
+      const valores = {
+        nombre: nombre.trim(),
+        costo,
+        precio_venta: precio,
+        duracion_dias: duracion,
+        foto_url: fotoUrl,
+      }
+      const { error } =
+        editando === 'nuevo'
+          ? await supabase.from('productos').insert(valores)
+          : await supabase.from('productos').update(valores).eq('id', (editando as Producto).id)
+      if (error) throw new Error(error.message)
+    } catch (err) {
+      setGuardando(false)
+      setErrorForm(err instanceof Error ? err.message : 'No se pudo guardar el producto.')
       return
     }
+    setGuardando(false)
     setEditando(null)
     reload()
   }
@@ -123,6 +136,21 @@ export default function Productos() {
                 <MoneyInput value={precio} onChange={setPrecio} placeholder="120.000" />
               </div>
             </div>
+            <div>
+              <label className="label-faint mb-1.5 block">Foto</label>
+              <div className="flex items-center gap-3">
+                <ProductoThumb url={previewFoto} size={56} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="block w-full text-sm text-ink-secondary file:mr-3 file:rounded-full file:border file:border-line file:bg-card file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-card3"
+                  onChange={(e) => setFotoNueva(e.target.files?.[0] ?? null)}
+                />
+              </div>
+              <p className="mt-1 text-xs text-ink-faint">
+                Se redimensiona a máx. 800×800 automáticamente.
+              </p>
+            </div>
             <p className="text-sm text-ink-secondary">
               Ganancia unitaria:{' '}
               <strong className={`font-medium ${ganancia >= 0 ? 'text-positive' : 'text-negative'}`}>
@@ -167,7 +195,12 @@ export default function Productos() {
               <tbody className="divide-y divide-line">
                 {(data ?? []).map((p) => (
                   <tr key={p.id} className={p.activo ? '' : 'opacity-60'}>
-                    <td className="py-3 pr-4 font-medium">{p.nombre}</td>
+                    <td className="py-3 pr-4">
+                      <div className="flex items-center gap-3">
+                        <ProductoThumb url={p.foto_url} size={36} />
+                        <span className="font-medium">{p.nombre}</span>
+                      </div>
+                    </td>
                     <td className="py-3 pr-4 text-right">{cop(p.costo)}</td>
                     <td className="py-3 pr-4 text-right">{cop(p.precio_venta)}</td>
                     <td className="py-3 pr-4 text-right font-medium text-positive">

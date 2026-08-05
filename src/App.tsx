@@ -10,6 +10,9 @@ import Pedidos from './pages/Pedidos'
 import PedidoNuevo from './pages/PedidoNuevo'
 import PedidoDetalle from './pages/PedidoDetalle'
 import Caja from './pages/Caja'
+import Compras from './pages/Compras'
+import CompraNueva from './pages/CompraNueva'
+import CompraDetalle from './pages/CompraDetalle'
 import Productos from './pages/Productos'
 import Kpis from './pages/Kpis'
 import Mensajes from './pages/Mensajes'
@@ -44,6 +47,9 @@ export default function App() {
             <Route path="pedidos/nuevo" element={<PedidoNuevo />} />
             <Route path="pedidos/:id" element={<PedidoDetalle />} />
             <Route path="caja" element={<Caja />} />
+            <Route path="compras" element={<Compras />} />
+            <Route path="compras/nueva" element={<CompraNueva />} />
+            <Route path="compras/:id" element={<CompraDetalle />} />
             <Route path="productos" element={<Productos />} />
             <Route path="kpis" element={<Kpis />} />
             <Route path="mensajes" element={<Mensajes />} />
