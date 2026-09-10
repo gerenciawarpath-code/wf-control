@@ -1,13 +1,18 @@
 // WF Control — Edge Function "asistente"
 // Corre en Supabase (Deno). La clave de Anthropic vive aquí como secreto,
 // nunca en el navegador. Solo responde a socios con sesión iniciada (RLS).
-import Anthropic from 'npm:@anthropic-ai/sdk'
+import Anthropic from 'npm:@anthropic-ai/sdk@0.65.0'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
+
+// Cuántos datos enviamos a Anthropic por pregunta. Sin límite, el contexto
+// crece con el negocio y la API rechaza la petición con 400 por tamaño.
+const MAX_CLIENTES = 50
+const MAX_CUOTAS = 50
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -19,6 +24,15 @@ function json(body: unknown, status = 200) {
 /** Fecha de hoy en Colombia, formato AAAA-MM-DD */
 function hoyBogota(): string {
   return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })
+}
+
+interface ClienteDetalle {
+  id: string
+  nombre: string
+  telefono: string | null
+  deuda: number
+  total_comprado: number
+  fecha_recompra: string | null
 }
 
 Deno.serve(async (req) => {
@@ -39,7 +53,9 @@ Deno.serve(async (req) => {
     const { data: auth } = await supabase.auth.getUser()
     if (!auth?.user) return json({ error: 'Solo los socios pueden usar el asistente' }, 401)
 
-    const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
+    // .trim() por si al pegar el secreto quedó un espacio o salto de línea:
+    // eso produce un 401 inmediato de Anthropic (~1s), sin timeout.
+    const apiKey = Deno.env.get('ANTHROPIC_API_KEY')?.trim()
     if (!apiKey) {
       return json(
         { error: 'Falta el secreto ANTHROPIC_API_KEY en la configuración de la función' },
@@ -47,7 +63,20 @@ Deno.serve(async (req) => {
       )
     }
 
-    const body = await req.json()
+    // Cuerpo de la petición: si llega vacío o mal formado, req.json() lanza.
+    let body: { tipo?: string; cliente_id?: string; motivo?: string; pregunta?: string }
+    try {
+      body = await req.json()
+    } catch {
+      return json(
+        { error: 'El cuerpo de la petición está vacío o mal formado (se esperaba JSON)' },
+        400,
+      )
+    }
+    if (!body || typeof body !== 'object') {
+      return json({ error: 'El cuerpo de la petición debe ser un objeto JSON' }, 400)
+    }
+
     const hoy = hoyBogota()
 
     // ---- Datos reales (las vistas ya traen las fórmulas del dinero) ----
@@ -59,9 +88,27 @@ Deno.serve(async (req) => {
       supabase.from('caja_por_medio').select('*'),
     ])
 
-    const nombrePorCliente = new Map(
-      (clientes.data ?? []).map((c: { id: string; nombre: string }) => [c.id, c.nombre]),
-    )
+    // Validar CADA consulta: si una falla, no le mandamos datos vacíos a
+    // Anthropic — devolvemos un error claro indicando cuál falló.
+    // Ojo: .single() en resumen_general pone error si devuelve 0 o >1 filas.
+    const errores: string[] = []
+    if (resumen.error) errores.push(`resumen_general: ${resumen.error.message}`)
+    if (clientes.error) errores.push(`clientes_detalle: ${clientes.error.message}`)
+    if (cuotas.error) errores.push(`cuotas_detalle: ${cuotas.error.message}`)
+    if (pedidos.error) errores.push(`pedido_totales: ${pedidos.error.message}`)
+    if (porMedio.error) errores.push(`caja_por_medio: ${porMedio.error.message}`)
+    if (errores.length > 0) {
+      console.error('[asistente] Consultas a Supabase fallaron:', errores)
+      return json({ error: `No se pudieron leer los datos: ${errores.join('; ')}` }, 500)
+    }
+    if (!resumen.data) {
+      console.error('[asistente] resumen_general no devolvió exactamente una fila')
+      return json({ error: 'resumen_general no devolvió exactamente una fila' }, 500)
+    }
+
+    const clientesData = (clientes.data ?? []) as ClienteDetalle[]
+
+    const nombrePorCliente = new Map(clientesData.map((c) => [c.id, c.nombre]))
     const clientePorPedido = new Map(
       (pedidos.data ?? []).map((p: { pedido_id: string; cliente_id: string }) => [
         p.pedido_id,
@@ -97,9 +144,7 @@ Deno.serve(async (req) => {
 
     // ---- Modo 1: redactar un mensaje de WhatsApp para un cliente ----
     if (body.tipo === 'mensaje') {
-      const cliente = (clientes.data ?? []).find(
-        (c: { id: string }) => c.id === body.cliente_id,
-      )
+      const cliente = clientesData.find((c) => c.id === body.cliente_id)
       if (!cliente) return json({ error: 'Cliente no encontrado' }, 404)
 
       const contexto = {
@@ -118,14 +163,14 @@ Deno.serve(async (req) => {
       }
 
       const respuesta = await anthropic.messages.create({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-5',
         max_tokens: 1024,
         system:
           'Redactas mensajes de WhatsApp para los clientes de Warpath Forge, una tienda colombiana de suplementos deportivos. Escribe UN solo mensaje corto (2 a 4 frases), cálido, cercano y profesional, en español colombiano, tuteando. Usa únicamente los datos entregados: nunca inventes montos, fechas ni productos. Formatea el dinero como $1.234.567. Si el motivo es un cobro y hay cuotas pendientes, menciona el monto pendiente sin sonar agresivo. Saluda por el primer nombre. Sin hashtags ni firmas largas. Devuelve SOLO el texto del mensaje, sin comillas ni explicaciones.',
         messages: [
           {
             role: 'user',
-            content: `Datos del cliente:\n${JSON.stringify(contexto)}\n\nMotivo del mensaje: ${motivos[body.motivo] ?? String(body.motivo)}`,
+            content: `Datos del cliente:\n${JSON.stringify(contexto)}\n\nMotivo del mensaje: ${motivos[body.motivo ?? ''] ?? String(body.motivo)}`,
           },
         ],
       })
@@ -134,30 +179,37 @@ Deno.serve(async (req) => {
     }
 
     // ---- Modo 2: pregunta libre sobre el negocio ----
+    // Recortamos el contexto para no pasarnos del límite de la API:
+    // clientes por relevancia (primero los que deben), cuotas por urgencia.
+    const clientesRelevantes = [...clientesData]
+      .sort((a, b) => {
+        const da = a.deuda ?? 0
+        const db = b.deuda ?? 0
+        if (db !== da) return db - da // primero mayor deuda
+        return (b.total_comprado ?? 0) - (a.total_comprado ?? 0)
+      })
+      .slice(0, MAX_CLIENTES)
+
+    const cuotasUrgentes = [...cuotasPendientes]
+      .sort((a, b) => a.fecha.localeCompare(b.fecha)) // más antiguas/vencidas primero
+      .slice(0, MAX_CUOTAS)
+
     const contexto = {
       hoy,
       resumen: resumen.data,
       caja_por_medio: porMedio.data,
-      clientes: (clientes.data ?? []).map(
-        (c: {
-          nombre: string
-          telefono: string | null
-          deuda: number
-          total_comprado: number
-          fecha_recompra: string | null
-        }) => ({
-          nombre: c.nombre,
-          telefono: c.telefono,
-          deuda: c.deuda,
-          total_comprado: c.total_comprado,
-          se_le_acaba_el_producto: c.fecha_recompra,
-        }),
-      ),
-      cuotas_no_pagadas: cuotasPendientes,
+      // Sin teléfono: no se necesita para responder preguntas del negocio.
+      clientes: clientesRelevantes.map((c) => ({
+        nombre: c.nombre,
+        deuda: c.deuda,
+        total_comprado: c.total_comprado,
+        se_le_acaba_el_producto: c.fecha_recompra,
+      })),
+      cuotas_no_pagadas: cuotasUrgentes,
     }
 
     const respuesta = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-sonnet-5',
       max_tokens: 1024,
       system: `Eres el asistente interno de WF Control, el centro de control de Warpath Forge (tienda colombiana de suplementos deportivos). Respondes preguntas de los tres socios usando ÚNICAMENTE los datos entregados; el campo "hoy" trae la fecha actual de Colombia.
 
@@ -191,6 +243,27 @@ Reglas:
     const texto = respuesta.content.find((b) => b.type === 'text')?.text ?? ''
     return json({ respuesta: texto })
   } catch (e) {
-    return json({ error: e instanceof Error ? e.message : 'Error inesperado' }, 500)
+    // Logging real: mensaje + stack + detalle de Anthropic (status y body del
+    // SDK) para que los logs de Supabase muestren la causa exacta, no solo
+    // "booted"/"shutdown".
+    const err = e as {
+      message?: string
+      stack?: string
+      name?: string
+      status?: number
+      error?: unknown
+      response?: { status?: number; body?: unknown }
+      headers?: unknown
+    }
+    const anthropicStatus = err.status ?? err.response?.status
+    const anthropicBody = err.error ?? err.response?.body
+    console.error('[asistente] Error no controlado:', {
+      name: err.name,
+      message: err.message,
+      anthropic_status: anthropicStatus,
+      anthropic_body: anthropicBody,
+      stack: err.stack,
+    })
+    return json({ error: err.message ?? 'Error inesperado' }, 500)
   }
 })
