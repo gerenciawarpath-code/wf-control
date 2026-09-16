@@ -37,7 +37,7 @@ const medios: { id: Medio; label: string }[] = [
 
 export default function PedidoNuevo() {
   const navigate = useNavigate()
-  const { socio } = useAuth()
+  const { socio, session } = useAuth()
   const clientes = useData(getClientes)
   const productos = useData(getProductos)
   const socios = useData(getSocios)
@@ -107,6 +107,12 @@ export default function PedidoNuevo() {
         )
     }
 
+    // Solo el pedido de contado registra un abono (registrado_por). Validamos antes de
+    // crear la cabecera para no dejar un pedido huérfano ni reventar en socio!.id.
+    const registradoPor = socio?.id ?? session?.user?.id
+    if (tipo !== 'credito' && !registradoPor)
+      return setError('Tu sesión no está disponible o expiró. Vuelve a iniciar sesión e inténtalo de nuevo.')
+
     setGuardando(true)
     const { data: pedido, error: e1 } = await supabase
       .from('pedidos')
@@ -152,7 +158,7 @@ export default function PedidoNuevo() {
           monto: valorTotal,
           medio,
           fecha,
-          registrado_por: socio!.id,
+          registrado_por: registradoPor,
           comprobante_path: path,
         })
         if (e4) throw new Error(e4.message)

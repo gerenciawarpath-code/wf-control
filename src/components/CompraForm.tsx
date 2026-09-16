@@ -41,7 +41,7 @@ export default function CompraForm({
   onGuardado: (id?: string) => void
   onCancelar: () => void
 }) {
-  const { socio } = useAuth()
+  const { socio, session } = useAuth()
   const proveedores = useData(getProveedores)
   const productos = useData(getProductos)
   const pedidos = useData(getPedidosFull)
@@ -107,6 +107,11 @@ export default function CompraForm({
       return setError('Cada renglón debe tener un costo mayor a cero.')
     if (!compraId && !archivo) return setError('Sube el comprobante de la compra.')
 
+    // registrado_por no puede leer socio!.id si socio llega null: respaldo con la sesión.
+    const registradoPor = socio?.id ?? session?.user?.id
+    if (!compraId && !registradoPor)
+      return setError('Tu sesión no está disponible o expiró. Vuelve a iniciar sesión e inténtalo de nuevo.')
+
     setGuardando(true)
     try {
       let comprobante_url = cabeceraInicial?.comprobante_url ?? null
@@ -125,7 +130,9 @@ export default function CompraForm({
         await actualizarCompra(compraId, cabecera, validos)
         onGuardado(compraId)
       } else {
-        const id = await crearCompra({ ...cabecera, registrado_por: socio!.id }, validos)
+        // registradoPor ya se validó arriba para el alta; este chequeo lo estrecha para TS.
+        if (!registradoPor) throw new Error('Tu sesión no está disponible o expiró.')
+        const id = await crearCompra({ ...cabecera, registrado_por: registradoPor }, validos)
         onGuardado(id)
       }
     } catch (e) {

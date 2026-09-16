@@ -33,7 +33,7 @@ export default function AbonoForm({
   onGuardado: () => void
   onCancelar: () => void
 }) {
-  const { socio } = useAuth()
+  const { socio, session } = useAuth()
   const editando = Boolean(abonoExistente)
   const [pedidoId, setPedidoId] = useState(pedidoFijo ?? abonoExistente?.pedido_id ?? '')
   const [monto, setMonto] = useState(abonoExistente?.monto ?? 0)
@@ -56,6 +56,13 @@ export default function AbonoForm({
     if (monto > topeMonto)
       return setError(`El abono supera el saldo del pedido (${cop(topeMonto)}).`)
 
+    // Quién registra el abono. socio.id === session.user.id (auth.ts lo carga por ese id),
+    // pero socio puede llegar null (fila de socios ausente/bloqueada por RLS, o aún cargando):
+    // usamos la sesión como respaldo y, si tampoco hay, avisamos en vez de reventar en `.id`.
+    const registradoPor = socio?.id ?? session?.user?.id
+    if (!editando && !registradoPor)
+      return setError('Tu sesión no está disponible o expiró. Vuelve a iniciar sesión e inténtalo de nuevo.')
+
     setGuardando(true)
     try {
       let path: string | null | undefined
@@ -74,7 +81,7 @@ export default function AbonoForm({
           monto,
           medio,
           fecha,
-          registrado_por: socio!.id,
+          registrado_por: registradoPor,
           comprobante_path: path ?? null,
         })
         if (e1) throw new Error(e1.message)
