@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
+  BookOpen,
   History,
   LayoutDashboard,
   LogOut,
@@ -11,6 +12,7 @@ import {
   ShoppingBag,
   ShoppingCart,
   Sun,
+  Tags,
   TrendingUp,
   Users,
   Wallet,
@@ -29,6 +31,8 @@ const tabs: { to: string; label: string; icono: LucideIcon }[] = [
   { to: '/caja', label: 'Caja', icono: Wallet },
   { to: '/compras', label: 'Compras', icono: ShoppingCart },
   { to: '/productos', label: 'Productos', icono: Package },
+  { to: '/marcas', label: 'Marcas', icono: Tags },
+  { to: '/catalogo', label: 'Catálogo', icono: BookOpen },
   { to: '/kpis', label: 'KPIs', icono: TrendingUp },
   { to: '/mensajes', label: 'Mensajes', icono: MessageCircle },
   { to: '/auditoria', label: 'Historial', icono: History },

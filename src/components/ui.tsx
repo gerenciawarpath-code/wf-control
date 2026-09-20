@@ -137,3 +137,33 @@ export function ErrorMsg({ children }: { children: ReactNode }) {
     <div className="rounded-control bg-negative-soft px-3 py-2 text-sm text-negative">{children}</div>
   )
 }
+
+/** Interruptor on/off accesible, en el azul de marca cuando está activo. */
+export function Switch({
+  activo,
+  onChange,
+  etiqueta,
+}: {
+  activo: boolean
+  onChange: (v: boolean) => void
+  etiqueta: string
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={activo}
+      aria-label={etiqueta}
+      onClick={() => onChange(!activo)}
+      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft ${
+        activo ? 'bg-accent' : 'bg-card3'
+      }`}
+    >
+      <span
+        className={`inline-block h-5 w-5 transform rounded-full bg-card shadow-sm transition-transform duration-200 ${
+          activo ? 'translate-x-5' : 'translate-x-0.5'
+        }`}
+      />
+    </button>
+  )
+}

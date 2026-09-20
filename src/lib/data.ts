@@ -223,7 +223,7 @@ export async function abrirComprobante(path: string) {
 /* ---------- Fotos de productos ---------- */
 
 /** Redimensiona a máx 800x800 y comprime a JPEG 85% antes de subir. */
-function redimensionar(file: File): Promise<Blob> {
+export function redimensionar(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.onload = () => {

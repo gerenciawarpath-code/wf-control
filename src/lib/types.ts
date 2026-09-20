@@ -23,6 +23,12 @@ export interface Producto {
   duracion_dias: number
   activo: boolean
   foto_url: string | null
+  /* Columnas del catálogo web (módulo Catálogo). Opcionales: los productos
+     antiguos y las pantallas existentes no las usan. */
+  ficha_id?: string | null
+  tamano?: string | null
+  precio_anterior?: number | null
+  visible_catalogo?: boolean
 }
 
 export interface Proveedor {
@@ -138,4 +144,56 @@ export interface ClienteDetalle {
   deuda: number
   num_pedidos: number
   fecha_recompra: string | null
+}
+
+/* ---------- Módulo Catálogo (vitrina web) ---------- */
+
+export type CategoriaCatalogo =
+  | 'proteinas'
+  | 'creatina'
+  | 'pre-entreno'
+  | 'aminoacidos'
+  | 'vitaminas'
+  | 'quemadores'
+  | 'salud'
+  | 'accesorios'
+
+export type ObjetivoCatalogo = 'masa' | 'definicion' | 'energia' | 'recuperacion' | 'salud'
+
+export type EtiquetaCatalogo = 'mas-vendido' | 'recomendado' | 'esencial'
+
+export interface Marca {
+  id: string
+  nombre: string
+  slug: string
+  pais: string | null
+  logo_url: string | null
+  descripcion: string | null
+  orden: number
+  visible: boolean
+}
+
+export interface CatalogoFicha {
+  id: string
+  slug: string
+  nombre: string
+  marca_id: string | null
+  tipo: CategoriaCatalogo | null
+  objetivos: ObjetivoCatalogo[] | null
+  resumen: string | null
+  descripcion: string | null
+  para_quien: string | null
+  contiene: string[] | null
+  uso: string | null
+  por_que: string | null
+  consideraciones: string[] | null
+  sabores: string[] | null
+  estimulante: boolean
+  etiqueta: EtiquetaCatalogo | null
+  nuevo: boolean
+  destacado: boolean
+  foto_url: string | null
+  fotos: string[] | null
+  orden: number
+  visible: boolean
 }
