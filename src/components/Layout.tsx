@@ -5,10 +5,12 @@ import {
   History,
   LayoutDashboard,
   LogOut,
+  Bell,
   Menu,
   MessageCircle,
   Moon,
   Package,
+  Search,
   ShoppingBag,
   ShoppingCart,
   Sun,
@@ -22,7 +24,6 @@ import {
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useTema } from '../lib/theme'
-import LogoWF from './LogoWF'
 
 const tabs: { to: string; label: string; icono: LucideIcon }[] = [
   { to: '/', label: 'Inicio', icono: LayoutDashboard },
@@ -38,6 +39,21 @@ const tabs: { to: string; label: string; icono: LucideIcon }[] = [
   { to: '/auditoria', label: 'Historial', icono: History },
 ]
 
+function Escudo() {
+  return (
+    <svg viewBox="0 0 40 44" aria-hidden="true">
+      <path
+        d="M20 1 37 7.5v13.2C37 31 29.8 39 20 43 10.2 39 3 31 3 20.7V7.5L20 1Z"
+        fill="#12213a"
+        stroke="#3b5a8c"
+        strokeWidth="1.3"
+      />
+      <path d="M20 9 25.5 22 20 34 14.5 22 20 9Z" fill="#2E6BFF" />
+      <path d="M20 9V34l-5.5-12L20 9Z" fill="#eaf1ff" opacity=".25" />
+    </svg>
+  )
+}
+
 export default function Layout() {
   const { socio } = useAuth()
   const { tema, alternar } = useTema()
@@ -47,105 +63,121 @@ export default function Layout() {
   // Cierra el menú móvil al navegar a otra ruta.
   useEffect(() => setMenuAbierto(false), [location.pathname])
 
+  const nombre = socio?.nombre ?? ''
+  const iniciales =
+    nombre
+      .split(/[\s@.]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0].toUpperCase())
+      .join('') || 'WF'
+
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-20 border-b border-line bg-page/80 backdrop-blur-md">
-        <div className="mx-auto flex h-[60px] max-w-[1200px] items-center gap-3 px-5 sm:px-12">
-          <span className="flex shrink-0 items-center gap-2.5">
-            <LogoWF altura={18} />
-            <span className="wf-brand">WF Control</span>
-          </span>
-
-          {/* Navegación inline: solo en desktop (lg+), sin scroll horizontal */}
-          <nav className="hidden flex-1 items-center justify-center gap-0.5 lg:flex">
-            {tabs.map((t) => (
-              <NavLink
-                key={t.to}
-                to={t.to}
-                end={t.to === '/'}
-                className={({ isActive }) =>
-                  `nav-link flex items-center gap-1.5${isActive ? ' on' : ''}`
-                }
-              >
-                <t.icono size={16} strokeWidth={1.75} />
-                {t.label}
-              </NavLink>
-            ))}
-          </nav>
-
-          <div className="flex flex-1 items-center justify-end gap-3 lg:flex-none">
-            <span className="hidden text-sm text-ink-secondary xl:block">{socio?.nombre}</span>
-            <button
-              onClick={alternar}
-              aria-label={tema === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-ink-secondary transition-colors duration-200 hover:bg-card3"
-            >
-              <span className="switch-icono" key={tema}>
-                {tema === 'light' ? (
-                  <Moon size={16} strokeWidth={1.75} />
-                ) : (
-                  <Sun size={16} strokeWidth={1.75} />
-                )}
-              </span>
-            </button>
-            <button onClick={() => supabase.auth.signOut()} className="btn-terciario hidden lg:inline-flex">
-              <LogOut size={16} strokeWidth={1.75} />
-              Salir
-            </button>
-            {/* Hamburguesa: solo debajo de lg */}
-            <button
-              onClick={() => setMenuAbierto((v) => !v)}
-              aria-label="Menú"
-              aria-expanded={menuAbierto}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-ink-secondary transition-colors duration-200 hover:bg-card3 lg:hidden"
-            >
-              {menuAbierto ? <X size={18} strokeWidth={1.75} /> : <Menu size={18} strokeWidth={1.75} />}
-            </button>
-          </div>
+    <div className="app">
+      <aside className={`side${menuAbierto ? ' open' : ''}`}>
+        <div className="brand">
+          <Escudo />
+          <div className="bn">WF CONTROL</div>
+          <div className="bt">RENDIMIENTO SIN IMPROVISACIÓN</div>
         </div>
 
-        {/* Drawer desde arriba en pantallas medianas y móviles */}
-        {menuAbierto && (
-          <>
-            <div
-              className="fixed inset-0 top-16 z-10 bg-black/30 lg:hidden"
-              onClick={() => setMenuAbierto(false)}
-            />
-            <div className="drawer-menu absolute inset-x-0 top-16 z-20 border-b border-line bg-card shadow-lg lg:hidden">
-              <nav className="mx-auto flex max-w-[1200px] flex-col gap-1 px-5 py-3 sm:px-12">
-                {tabs.map((t) => (
-                  <NavLink
-                    key={t.to}
-                    to={t.to}
-                    end={t.to === '/'}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-control px-3 py-2.5 text-sm transition-colors duration-200 ${
-                        isActive
-                          ? 'bg-accent-soft font-medium text-accent'
-                          : 'text-ink-secondary hover:bg-card3'
-                      }`
-                    }
-                  >
-                    <t.icono size={18} strokeWidth={1.75} />
-                    {t.label}
-                  </NavLink>
-                ))}
-                <div className="mt-1 flex items-center justify-between border-t border-line pt-3">
-                  <span className="text-sm text-ink-secondary">{socio?.nombre}</span>
-                  <button onClick={() => supabase.auth.signOut()} className="btn-terciario">
-                    <LogOut size={16} strokeWidth={1.75} />
-                    Salir
-                  </button>
-                </div>
-              </nav>
-            </div>
-          </>
-        )}
-      </header>
+        <nav className="side-nav" aria-label="Principal">
+          {tabs.map((t) => (
+            <NavLink
+              key={t.to}
+              to={t.to}
+              end={t.to === '/'}
+              className={({ isActive }) => (isActive ? 'on' : '')}
+            >
+              <t.icono size={18} strokeWidth={1.7} />
+              {t.label}
+            </NavLink>
+          ))}
+        </nav>
 
-      <main className="mx-auto max-w-[1200px] px-5 py-6 sm:px-12 sm:py-8">
-        <Outlet />
-      </main>
+        <div className="side-foot">
+          <div className="sf-t">
+            UN NEGOCIO
+            <br />
+            MÁS FUERTE
+            <br />
+            CADA DÍA
+          </div>
+          <svg className="peak" viewBox="0 0 210 40" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 40 L45 14 L80 30 L120 6 L160 26 L210 12 L210 40Z" fill="#0a1a33" />
+            <path
+              d="M0 40 L45 14 L80 30 L120 6 L160 26 L210 12"
+              fill="none"
+              stroke="#2E6BFF"
+              strokeWidth="1.2"
+              opacity=".6"
+            />
+          </svg>
+        </div>
+        <div className="side-ver">
+          <span>WF CONTROL v2.0</span>
+          <button className="salir" onClick={() => supabase.auth.signOut()}>
+            <LogOut size={14} strokeWidth={1.75} />
+            Salir
+          </button>
+        </div>
+      </aside>
+
+      {menuAbierto && <div className="side-scrim" onClick={() => setMenuAbierto(false)} />}
+
+      <div className="main-col">
+        <header className="topbar">
+          <button
+            className="menu-btn"
+            onClick={() => setMenuAbierto((v) => !v)}
+            aria-label="Menú"
+            aria-expanded={menuAbierto}
+          >
+            {menuAbierto ? <X size={18} strokeWidth={1.75} /> : <Menu size={18} strokeWidth={1.75} />}
+          </button>
+
+          {/* Visual por ahora: el buscador global aún no tiene función */}
+          <div className="search">
+            <Search size={16} strokeWidth={1.8} />
+            <input placeholder="Buscar clientes, pedidos, productos..." aria-label="Buscar" readOnly />
+            <span className="kbd">⌘K</span>
+          </div>
+          <div className="top-sp" />
+
+          <button className="icon-btn" aria-label="Notificaciones" type="button">
+            <Bell size={18} strokeWidth={1.7} />
+          </button>
+          <button
+            onClick={alternar}
+            aria-label={tema === 'light' ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'}
+            className="icon-btn"
+          >
+            <span className="switch-icono" key={tema}>
+              {tema === 'light' ? (
+                <Moon size={17} strokeWidth={1.75} />
+              ) : (
+                <Sun size={17} strokeWidth={1.75} />
+              )}
+            </span>
+          </button>
+          <div className="user">
+            <span className="av">{iniciales}</span>
+            <div className="who-txt">
+              <div className="un">{nombre}</div>
+              <div className="ur">Socio</div>
+            </div>
+          </div>
+          <div className="slogan">
+            DISCIPLINA
+            <br />
+            EN CADA DECISIÓN
+          </div>
+        </header>
+
+        <main className="main">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
