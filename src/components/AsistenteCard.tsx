@@ -39,20 +39,22 @@ export default function AsistenteCard() {
   }
 
   return (
-    <section className="panel asist">
+    <section className="panel pad asist">
       <div className="asist-head">
-        <span className="spark">
-          <Sparkles size={15} strokeWidth={1.75} />
+        <span className="spark2">
+          <Sparkles size={17} strokeWidth={1.75} />
         </span>
-        <h2>Asistente</h2>
+        <h2>Asistente WF (IA)</h2>
+        <span className="st">
+          <span className="dot" style={{ background: 'var(--success-fg)' }} />
+          En línea
+        </span>
       </div>
-      <p className="mt-1 ml-9 text-sm text-ink-secondary">
-        Pregúntale al negocio; responde con los datos reales.
-      </p>
-      <form onSubmit={enviar} className="mt-3.5 flex gap-2.5">
+      <p className="hint">Tu asistente para consultar ventas, clientes, pedidos y más.</p>
+      <form onSubmit={enviar} className="askrow">
         <input
-          className={inputBase}
-          placeholder="¿Quién paga hoy?"
+          className={`${inputBase} askin`}
+          placeholder="¿Qué necesitas saber hoy?"
           value={pregunta}
           onChange={(e) => setPregunta(e.target.value)}
         />
@@ -60,14 +62,10 @@ export default function AsistenteCard() {
           {cargando ? 'Pensando…' : 'Preguntar'}
         </button>
       </form>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <p className="sug-t">Sugerencias rápidas</p>
+      <div className="chips">
         {sugerencias.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => preguntar(s)}
-            className="rounded-full border border-line-mid bg-transparent px-3.5 py-1.5 text-xs text-ink-secondary transition-colors duration-150 hover:border-accent hover:bg-accent-soft hover:text-ink"
-          >
+          <button key={s} type="button" onClick={() => preguntar(s)} className="chip-sug">
             {s}
           </button>
         ))}

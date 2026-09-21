@@ -354,3 +354,87 @@ export async function getAuditoria(): Promise<AuditoriaFila[]> {
     await supabase.from('auditoria_detalle').select('*').limit(100).returns<AuditoriaFila[]>(),
   )
 }
+
+/* ---------- Inicio v2: lecturas de solo lectura (sin costos, ganancia ni caja) ---------- */
+
+export interface VentaDia {
+  fecha: string
+  total: number
+}
+
+/** Ventas por día de los últimos 30 días (suma de valor_total de pedido_totales). */
+export async function getVentas30(): Promise<VentaDia[]> {
+  const hoy = hoyISO()
+  const desde = sumarDias(hoy, -29)
+  const rows = check(
+    await supabase
+      .from('pedido_totales')
+      .select('fecha, valor_total')
+      .gte('fecha', desde)
+      .lte('fecha', hoy)
+      .returns<{ fecha: string; valor_total: number }[]>(),
+  )
+  const porDia = new Map<string, number>()
+  for (const r of rows) porDia.set(r.fecha, (porDia.get(r.fecha) ?? 0) + Number(r.valor_total))
+  return Array.from({ length: 30 }, (_, i) => {
+    const fecha = sumarDias(desde, i)
+    return { fecha, total: porDia.get(fecha) ?? 0 }
+  })
+}
+
+export interface SeAcabaItem {
+  cliente_id: string
+  cliente_nombre: string
+  producto: string
+  /** Fecha del pedido con que empezó a consumirlo */
+  desde: string
+  /** Días que faltan para que se le acabe (0 = hoy) */
+  dias: number
+}
+
+interface PedidoConItems {
+  fecha: string
+  cliente_id: string
+  clientes: { nombre: string } | null
+  pedido_items: {
+    cantidad: number
+    productos: { id: string; nombre: string; duracion_dias: number } | null
+  }[]
+}
+
+/**
+ * Por cada cliente y producto, toma el último pedido y calcula
+ * fin = fecha + cantidad × duracion_dias (misma regla que clientes_detalle).
+ * Devuelve los que terminan en los próximos 7 días.
+ */
+export async function getSeAcaba(): Promise<SeAcabaItem[]> {
+  const pedidos = check(
+    await supabase
+      .from('pedidos')
+      .select('fecha, cliente_id, clientes(nombre), pedido_items(cantidad, productos(id, nombre, duracion_dias))')
+      .order('fecha', { ascending: false }),
+  ) as unknown as PedidoConItems[]
+
+  const hoy = hoyISO()
+  const finVentana = sumarDias(hoy, 7)
+  const visto = new Set<string>()
+  const out: SeAcabaItem[] = []
+  for (const p of pedidos) {
+    for (const it of p.pedido_items) {
+      if (!it.productos) continue
+      const clave = `${p.cliente_id}|${it.productos.id}`
+      if (visto.has(clave)) continue // ya se tomó el pedido más reciente de este producto
+      visto.add(clave)
+      const fin = sumarDias(p.fecha, it.cantidad * it.productos.duracion_dias)
+      if (fin < hoy || fin > finVentana) continue
+      out.push({
+        cliente_id: p.cliente_id,
+        cliente_nombre: p.clientes?.nombre ?? '—',
+        producto: it.productos.nombre,
+        desde: p.fecha,
+        dias: -diasDesde(fin),
+      })
+    }
+  }
+  return out.sort((a, b) => a.dias - b.dias)
+}
