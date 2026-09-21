@@ -1977,3 +1977,12 @@ th {
 .ped-monto .est.pos {
   color: var(--success-fg);
 }
+.cli-sel {
+  width: auto;
+  height: 42px;
+  min-width: 150px;
+  flex: 0 1 190px;
+  border-radius: 11px;
+  background: var(--surface-1);
+  box-shadow: var(--shadow-sm);
+}
