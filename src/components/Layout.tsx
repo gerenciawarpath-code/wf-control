@@ -50,10 +50,10 @@ export default function Layout() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-20 border-b border-line bg-page/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-3 px-5 sm:px-12">
+        <div className="mx-auto flex h-[60px] max-w-[1200px] items-center gap-3 px-5 sm:px-12">
           <span className="flex shrink-0 items-center gap-2.5">
             <LogoWF altura={18} />
-            <span className="text-[15px] font-medium tracking-tight">WF Control</span>
+            <span className="wf-brand">WF Control</span>
           </span>
 
           {/* Navegación inline: solo en desktop (lg+), sin scroll horizontal */}
@@ -64,11 +64,7 @@ export default function Layout() {
                 to={t.to}
                 end={t.to === '/'}
                 className={({ isActive }) =>
-                  `flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm transition-colors duration-200 ${
-                    isActive
-                      ? 'bg-accent-soft font-medium text-accent'
-                      : 'text-ink-secondary hover:bg-card3'
-                  }`
+                  `nav-link flex items-center gap-1.5${isActive ? ' on' : ''}`
                 }
               >
                 <t.icono size={16} strokeWidth={1.75} />

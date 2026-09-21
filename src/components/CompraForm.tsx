@@ -311,7 +311,7 @@ export default function CompraForm({
 
         <div className="border-t border-line pt-4 text-right">
           <Label className="mb-1">Total de la compra</Label>
-          <div className="text-2xl font-semibold tracking-tight">{cop(total)}</div>
+          <div className="dsp tnum text-2xl font-bold tracking-tight">{cop(total)}</div>
         </div>
 
         {error && <ErrorMsg>{error}</ErrorMsg>}

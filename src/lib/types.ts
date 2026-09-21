@@ -121,6 +121,8 @@ export interface CuotaDetalle {
   fecha: string
   monto: number
   pagado: number
+  /** Estado calculado por la vista SQL cuotas_detalle (única fuente). */
+  estado: EstadoCuota
 }
 
 export interface ResumenGeneral {

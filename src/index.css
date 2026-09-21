@@ -10,85 +10,96 @@
    ===================================================================== */
 
 :root {
-  /* Fondos y superficies */
-  --bg-page: #f7f7f4;
+  /* Tipografía */
+  --font-display: 'Saira', system-ui, -apple-system, sans-serif;
+
+  /* Modo claro (derivado del DESIGN v3). Fondos y superficies */
+  --bg-page: #eef1f6;
   --surface-1: #ffffff;
-  --surface-2: #fbfbf9;
-  --surface-3: #f0f0ec;
+  --surface-2: #f3f6fa;
+  --surface-3: #e9eef4;
 
   /* Bordes */
-  --border-subtle: rgba(10, 10, 10, 0.06);
-  --border-default: rgba(10, 10, 10, 0.1);
-  --border-strong: rgba(10, 10, 10, 0.16);
-  --border-focus: #1466ff;
+  --border-subtle: #dce3ec;
+  --border-default: #c6d0dc;
+  --border-strong: #b7c2d0;
+  --border-focus: #1e6fe0;
 
   /* Texto */
-  --text-primary: #0a0a0a;
-  --text-secondary: #52524e;
-  --text-tertiary: #8b8b85;
-  --text-quaternary: #b8b8b2;
+  --text-primary: #0c1119;
+  --text-secondary: #5a6675;
+  --text-tertiary: #93a0b0;
+  --text-quaternary: #b8c0cb;
 
-  /* Marca */
-  --brand-tint: #eaf1ff;
-  --halo: rgba(20, 102, 255, 0.15);
-  --gradient-hero: linear-gradient(135deg, #e2eeff 0%, #ffffff 100%);
+  /* Marca / acento (solo acciones). Cambia por modo. */
+  --accent: #1e6fe0;
+  --accent-2: #2e8bff;
+  --accent-soft: rgba(30, 111, 224, 0.1);
+  --brand-tint: rgba(30, 111, 224, 0.1);
+  --halo: rgba(30, 111, 224, 0.15);
+  --gradient-hero: linear-gradient(135deg, rgba(30, 111, 224, 0.06) 0%, #ffffff 100%);
 
-  /* Estados */
-  --success-fg: #16a34a;
-  --success-bg: #e7f6ec;
-  --danger-fg: #dc2626;
-  --danger-bg: #fdecec;
-  --warning-fg: #b45309;
-  --warning-bg: #fdf3e3;
+  /* Estados (positivo / advertencia / crítico) */
+  --success-fg: #1e9e68;
+  --success-bg: rgba(30, 158, 104, 0.12);
+  --danger-fg: #d93a34;
+  --danger-bg: rgba(217, 58, 52, 0.1);
+  --warning-fg: #c4881e;
+  --warning-bg: rgba(196, 136, 30, 0.12);
 
-  /* Sombras */
-  --shadow-sm: 0 1px 2px rgba(10, 10, 10, 0.04);
-  --shadow-md: 0 2px 8px rgba(10, 10, 10, 0.06), 0 1px 2px rgba(10, 10, 10, 0.04);
-  --shadow-lg: 0 8px 24px rgba(10, 10, 10, 0.08), 0 2px 4px rgba(10, 10, 10, 0.04);
-  --shadow-glow-blue: 0 0 40px rgba(20, 102, 255, 0.15);
+  /* Sombras (el modo claro sí admite sombra suave) */
+  --shadow-sm: 0 1px 2px rgba(10, 20, 40, 0.05);
+  --shadow-md: 0 2px 8px rgba(10, 20, 40, 0.07), 0 1px 2px rgba(10, 20, 40, 0.05);
+  --shadow-lg: 0 8px 24px rgba(10, 20, 40, 0.1), 0 2px 4px rgba(10, 20, 40, 0.05);
+  --shadow-glow-blue: 0 0 40px rgba(30, 111, 224, 0.15);
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :root[data-theme='dark'] {
-  /* Negro profundo con matiz azul apenas perceptible; cards más oscuras
-     para que el azul brille por contraste */
-  --bg-page: #050608;
-  --surface-1: #0f1015;
-  --surface-2: #15161d;
-  --surface-3: #1c1d25;
+  /* Modo oscuro (principal del DESIGN v3): negro azulado profundo,
+     paneles apenas más claros; el azul brilla por contraste. */
+  --bg-page: #080b11;
+  --surface-1: #0e141d;
+  --surface-2: #131b26;
+  --surface-3: #182231;
 
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --border-focus: #4da6ff;
+  --border-subtle: #1e2836;
+  --border-default: #2b3745;
+  --border-strong: #3a4655;
+  --border-focus: #2e8bff;
 
-  --text-primary: #f5f5f3;
-  --text-secondary: #a8a8a2;
-  --text-tertiary: #6d6d68;
-  --text-quaternary: #46464a;
+  --text-primary: #f3f6fb;
+  --text-secondary: #93a0b0;
+  --text-tertiary: #5e6b7a;
+  --text-quaternary: #47535f;
 
-  --brand-tint: rgba(77, 166, 255, 0.12);
-  --halo: rgba(77, 166, 255, 0.35);
-  --gradient-hero: linear-gradient(135deg, rgba(20, 102, 255, 0.16) 0%, rgba(15, 16, 21, 1) 65%);
+  --accent: #2e8bff;
+  --accent-2: #57a6ff;
+  --accent-soft: rgba(46, 139, 255, 0.13);
+  --brand-tint: rgba(46, 139, 255, 0.13);
+  --halo: rgba(46, 139, 255, 0.3);
+  --gradient-hero: linear-gradient(135deg, rgba(46, 139, 255, 0.1) 0%, #0e141d 65%);
 
-  --success-fg: #4ade80;
-  --success-bg: rgba(74, 222, 128, 0.14);
-  --danger-fg: #f87171;
-  --danger-bg: rgba(248, 113, 113, 0.14);
-  --warning-fg: #fbbf24;
-  --warning-bg: rgba(251, 191, 36, 0.14);
+  --success-fg: #33b87d;
+  --success-bg: rgba(51, 184, 125, 0.13);
+  --danger-fg: #f0524b;
+  --danger-bg: rgba(240, 82, 75, 0.12);
+  --warning-fg: #e3a93a;
+  --warning-bg: rgba(227, 169, 58, 0.14);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
-  --shadow-glow-blue: 0 0 60px rgba(77, 166, 255, 0.25);
+  /* Profundidad sin sombras marcadas: bordes + fondo. Sombra mínima. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-glow-blue: 0 0 60px rgba(46, 139, 255, 0.22);
 }
 
 /* Utilidades de Tailwind mapeadas a las variables del tema (runtime) */
 @theme inline {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Saira', system-ui, -apple-system, sans-serif;
 
   --color-page: var(--bg-page);
   --color-card: var(--surface-1);
@@ -104,11 +115,11 @@
   --color-ink-faint: var(--text-tertiary);
   --color-ink-placeholder: var(--text-quaternary);
 
-  --color-accent: #1466ff;
-  --color-accent-hover: #0f52cc;
-  --color-accent-deep: #0052e0;
-  --color-accent-bright: #4da6ff;
-  --color-accent-soft: var(--brand-tint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-2);
+  --color-accent-deep: var(--accent);
+  --color-accent-bright: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
 
   --color-positive: var(--success-fg);
   --color-positive-soft: var(--success-bg);
@@ -174,26 +185,28 @@ header nav::-webkit-scrollbar {
 /* ===== Tipografía ===== */
 
 .label-faint {
+  font-family: var(--font-display);
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-tertiary);
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-weight: 700;
 }
 
 .titulo-pantalla {
-  font-size: clamp(22px, 3vw, 28px);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 26px);
+  font-weight: 800;
+  letter-spacing: 0.01em;
   line-height: 1.15;
 }
 
-.figure-display {
-  font-size: clamp(40px, 7vw, 56px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+/* Títulos de sección dentro de tarjetas/paneles → Saira (consistencia global) */
+.card h2,
+.modal-caja h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 /* ===== Marca ===== */
@@ -205,42 +218,6 @@ header nav::-webkit-scrollbar {
   filter: drop-shadow(0 0 12px rgba(20, 102, 255, 0.5));
 }
 
-/* Shimmer de marca: solo UNA cifra por vista (firma, no efecto) */
-.shimmer-marca {
-  background-image: linear-gradient(
-    100deg,
-    #1466ff 30%,
-    rgba(77, 166, 255, 0.85) 50%,
-    #1466ff 70%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer-sweep 3s linear infinite;
-}
-
-/* En oscuro la cifra se vuelve eléctrica: azul brillante con brillo blanco */
-:root[data-theme='dark'] .shimmer-marca {
-  background-image: linear-gradient(
-    100deg,
-    #4da6ff 30%,
-    #d9ecff 50%,
-    #4da6ff 70%
-  );
-  background-size: 200% 100%;
-  filter: drop-shadow(0 0 18px rgba(77, 166, 255, 0.45));
-}
-
-@keyframes shimmer-sweep {
-  from {
-    background-position: 200% 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
-}
-
 /* ===== Componentes ===== */
 
 .btn-primario {
@@ -248,27 +225,22 @@ header nav::-webkit-scrollbar {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-image: linear-gradient(135deg, #1466ff 0%, #0052e0 100%);
+  background: var(--accent);
   color: #ffffff;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 15px;
   padding: 11px 22px;
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow:
-    0 1px 2px rgba(20, 102, 255, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
   transition:
     transform 150ms ease,
-    box-shadow 150ms ease,
+    background-color 150ms ease,
     filter 150ms ease;
 }
 .btn-primario:hover {
-  filter: brightness(1.08);
-  box-shadow:
-    0 2px 12px rgba(20, 102, 255, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  background: var(--accent-2);
 }
 .btn-primario:active {
   transform: scale(0.98);
@@ -308,7 +280,7 @@ header nav::-webkit-scrollbar {
   background: none;
   border: none;
   padding: 0;
-  color: #1466ff;
+  color: var(--accent);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -429,13 +401,12 @@ header nav::-webkit-scrollbar {
 .card {
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 20px;
-  box-shadow: var(--shadow-sm);
 }
 @media (min-width: 640px) {
   .card {
-    padding: 24px;
+    padding: 22px 24px;
   }
 }
 
@@ -451,32 +422,6 @@ header nav::-webkit-scrollbar {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: var(--border-default);
-}
-
-.card-hero {
-  position: relative;
-  overflow: hidden;
-  background-color: var(--surface-1);
-  background-image: var(--gradient-hero);
-  border: 1px solid var(--border-subtle);
-  border-radius: 20px;
-  padding: 24px;
-}
-@media (min-width: 640px) {
-  .card-hero {
-    padding: 32px;
-  }
-}
-.card-hero::before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, var(--halo), transparent 70%);
-  filter: blur(40px);
-  pointer-events: none;
 }
 
 .input-base {
@@ -615,5 +560,387 @@ textarea.input-area:focus {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* =====================================================================
+   Tipografía display (Saira) y utilidades del rediseño
+   ===================================================================== */
+.dsp {
+  font-family: var(--font-display);
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+.eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Marca de la barra superior (Saira) */
+.wf-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.wf-brand .sep {
+  color: var(--accent);
+}
+
+/* Menú superior: activo con subrayado azul brillante (única "luz") */
+.nav-link {
+  position: relative;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 8px 11px;
+  border-radius: 7px;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease;
+}
+.nav-link:hover {
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
+.nav-link.on {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.nav-link.on::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--accent);
+}
+
+/* =====================================================================
+   Pantalla de Inicio (rediseño v3) — clases con alcance en .inicio
+   Solo apariencia; los datos y el comportamiento no cambian.
+   ===================================================================== */
+.inicio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inicio .pagehead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.inicio .pagehead h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--text-primary);
+}
+.inicio .pagehead .when {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.inicio .panel {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+/* Hero Caja */
+.inicio .caja {
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 8px 40px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.inicio .caja::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 22px 1px var(--accent-soft);
+}
+.inicio .caja .lead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.inicio .caja .num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(40px, 7vw, 58px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.inicio .caja .num small {
+  font-size: 0.42em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-right: 0.15em;
+  vertical-align: 0.28em;
+}
+.inicio .subrow {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.inicio .substat {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  padding: 12px 15px;
+  min-width: 150px;
+  flex: 1 1 0;
+}
+.inicio .substat .k {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+.inicio .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.inicio .substat .v {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+}
+
+/* Tarjetas de dato (tiles) */
+.inicio .tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.inicio .tile-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.inicio .tile {
+  padding: 18px 20px;
+  position: relative;
+  height: 100%;
+  transition: border-color 140ms ease;
+}
+.inicio .tile-link:hover .tile {
+  border-color: var(--border-default);
+}
+.inicio .tile .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.inicio .tile .v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.inicio .tile .sub {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.inicio .tile.alert .v {
+  color: var(--danger-fg);
+}
+.inicio .tile.alert::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 0;
+  width: 2px;
+  background: var(--danger-fg);
+  border-radius: 2px;
+}
+
+/* Chips de estado (semánticos, aparte del acento) — reutilizables en todo WF */
+.chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.chip.crit {
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-bg);
+}
+.chip.blue {
+  color: var(--accent-2);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-soft);
+}
+.chip.pos {
+  color: var(--success-fg);
+  background: var(--success-bg);
+  border: 1px solid var(--success-bg);
+}
+.chip.warn {
+  color: var(--warning-fg);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-bg);
+}
+.chip.mute {
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Asistente */
+.inicio .asist {
+  padding: 20px 22px;
+}
+.inicio .asist-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.inicio .asist-head .spark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  color: var(--accent-2);
+  flex: 0 0 auto;
+}
+.inicio .asist-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Requiere atención / Próximos a recomprar (listas con barra de severidad) */
+.inicio .att {
+  padding: 6px 4px 4px;
+}
+.inicio .att-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px 12px;
+}
+.inicio .att-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text-primary);
+}
+.inicio .att-head .count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-bg);
+  border-radius: 20px;
+  padding: 3px 9px;
+}
+.inicio .att-empty {
+  padding: 2px 18px 18px;
+}
+.inicio .row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 18px;
+  border-top: 1px solid var(--border-subtle);
+  transition: background-color 120ms ease;
+}
+.inicio .row:hover {
+  background: var(--surface-2);
+}
+.inicio .row .who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.inicio .stripe {
+  width: 3px;
+  height: 34px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+}
+.inicio .row .name {
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--text-primary);
+}
+.inicio a.row:hover .name,
+.inicio .row .name:hover {
+  color: var(--accent-2);
+}
+.inicio .row .meta {
+  font-size: 12px;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+.inicio .row .amt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  text-align: right;
+  color: var(--text-primary);
+}
+
+@media (max-width: 820px) {
+  .inicio .caja {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .inicio .subrow {
+    justify-content: flex-start;
+  }
+  .inicio .tiles {
+    grid-template-columns: 1fr;
   }
 }

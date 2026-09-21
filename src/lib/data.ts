@@ -6,7 +6,6 @@ import type {
   ClienteDetalle,
   CompraItem,
   CuotaDetalle,
-  EstadoCuota,
   Medio,
   PedidoTotales,
   Producto,
@@ -19,16 +18,6 @@ function check<T>(res: { data: T | null; error: { message: string } | null }): T
   if (res.error) throw new Error(res.error.message)
   if (res.data === null) throw new Error('Sin datos')
   return res.data
-}
-
-/**
- * Estado de una cuota, calculado con la fecha local del dispositivo
- * (la vista reparte lo pagado; aquí solo se compara contra hoy).
- */
-export function estadoCuota(c: { fecha: string; monto: number; pagado: number }): EstadoCuota {
-  if (c.pagado >= c.monto) return 'pagada'
-  if (c.fecha < hoyISO()) return 'vencida'
-  return c.pagado > 0 ? 'parcial' : 'pendiente'
 }
 
 export async function getResumen(): Promise<ResumenGeneral> {
@@ -152,7 +141,7 @@ export async function getInicio(): Promise<Inicio> {
   const porCliente = new Map<string, { nombre: string; vencido: number; hoy: number; dias: number }>()
   const hoy = hoyISO()
   for (const c of cuotas) {
-    const estado = estadoCuota(c)
+    const estado = c.estado
     if (estado === 'pagada') continue
     const esVencida = estado === 'vencida'
     const venceHoy = c.fecha === hoy

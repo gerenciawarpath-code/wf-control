@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import {
   abrirComprobante,
-  estadoCuota,
   getAbonosFull,
   getClientes,
   getCuotasDetalle,
@@ -162,18 +161,18 @@ export default function PedidoDetalle() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <Label>Valor total</Label>
-          <div className="mt-2 text-2xl font-semibold tracking-tight">{cop(p.valor_total)}</div>
+          <div className="mt-2 dsp tnum text-2xl font-bold tracking-tight">{cop(p.valor_total)}</div>
         </Card>
         <Card>
           <Label>Recaudado</Label>
-          <div className="mt-2 text-2xl font-semibold tracking-tight text-positive">
+          <div className="mt-2 dsp tnum text-2xl font-bold tracking-tight text-positive">
             {cop(p.recaudado)}
           </div>
         </Card>
         <Card>
           <Label>Saldo</Label>
           <div
-            className={`mt-2 text-2xl font-semibold tracking-tight ${p.saldo > 0 ? 'text-negative' : ''}`}
+            className={`mt-2 dsp tnum text-2xl font-bold tracking-tight ${p.saldo > 0 ? 'text-negative' : ''}`}
           >
             {cop(p.saldo)}
           </div>
@@ -269,7 +268,7 @@ export default function PedidoDetalle() {
           ) : (
             <ul className="mt-2 divide-y divide-line">
               {(cuotas.data ?? []).map((c) => {
-                const estado = estadoCuota(c)
+                const estado = c.estado
                 return (
                   <li key={c.id} className="flex flex-wrap items-center gap-3 py-3">
                     <div className="min-w-0 flex-1">

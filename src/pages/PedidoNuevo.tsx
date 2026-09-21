@@ -295,7 +295,7 @@ export default function PedidoNuevo() {
           )}
           <div className="mt-4 border-t border-line pt-4 text-right">
             <Label className="mb-1">Valor total</Label>
-            <div className="text-2xl font-semibold tracking-tight">{cop(valorTotal)}</div>
+            <div className="dsp tnum text-2xl font-bold tracking-tight">{cop(valorTotal)}</div>
           </div>
         </Card>
 

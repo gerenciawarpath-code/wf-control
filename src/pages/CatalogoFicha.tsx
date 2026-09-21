@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, X } from 'lucide-react'
 import { useData } from '../lib/hooks'
 import { cop } from '../lib/format'
 import {
@@ -78,8 +78,11 @@ export default function CatalogoFicha() {
   const [nuevo, setNuevo] = useState(false)
   const [destacado, setDestacado] = useState(false)
   const [visible, setVisible] = useState(true)
+  const [orden, setOrden] = useState(100)
   const [fotoActual, setFotoActual] = useState<string | null>(null)
   const [fotoNueva, setFotoNueva] = useState<File | null>(null)
+  const [fotos, setFotos] = useState<string[]>([])
+  const [subiendoGaleria, setSubiendoGaleria] = useState(false)
 
   const [guardando, setGuardando] = useState(false)
   const [errorForm, setErrorForm] = useState<string | null>(null)
@@ -105,8 +108,30 @@ export default function CatalogoFicha() {
     setNuevo(ficha.nuevo)
     setDestacado(ficha.destacado)
     setVisible(ficha.visible)
+    setOrden(ficha.orden)
     setFotoActual(ficha.foto_url)
+    setFotos(ficha.fotos ?? [])
   }, [ficha, esNueva])
+
+  // Galería: sube cada archivo al mismo bucket y guarda su URL.
+  async function agregarFotos(files: FileList | null) {
+    if (!files || files.length === 0) return
+    setErrorForm(null)
+    setSubiendoGaleria(true)
+    try {
+      const urls: string[] = []
+      for (const f of Array.from(files)) urls.push(await subirFotoCatalogo(f))
+      setFotos((prev) => [...prev, ...urls])
+    } catch (err) {
+      setErrorForm(err instanceof Error ? err.message : 'No se pudieron subir las fotos.')
+    } finally {
+      setSubiendoGaleria(false)
+    }
+  }
+
+  function quitarFoto(url: string) {
+    setFotos((prev) => prev.filter((u) => u !== url))
+  }
 
   const previewFoto = fotoNueva ? URL.createObjectURL(fotoNueva) : fotoActual
   const slug = esNueva ? generarSlug(nombre) : (ficha?.slug ?? '')
@@ -145,6 +170,8 @@ export default function CatalogoFicha() {
         destacado,
         visible,
         foto_url: fotoUrl,
+        fotos,
+        orden,
       }
       if (esNueva) {
         const nuevoId = await crearFicha(valores)
@@ -356,6 +383,53 @@ export default function CatalogoFicha() {
                 Se redimensiona a máx. 800×800 automáticamente.
               </p>
             </div>
+          </div>
+
+          {/* Galería de fotos (adicionales a la principal) */}
+          <div>
+            <label className="label-faint mb-1.5 block">Galería de fotos (opcional)</label>
+            {fotos.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-3">
+                {fotos.map((url) => (
+                  <div key={url} className="relative">
+                    <ProductoThumb url={url} size={64} />
+                    <button
+                      type="button"
+                      onClick={() => quitarFoto(url)}
+                      aria-label="Quitar foto"
+                      className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-line bg-card text-ink-secondary hover:text-negative"
+                    >
+                      <X size={12} strokeWidth={2} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              disabled={subiendoGaleria}
+              className="block w-full text-sm text-ink-secondary file:mr-3 file:rounded-full file:border file:border-line file:bg-card file:px-4 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-card3"
+              onChange={(e) => agregarFotos(e.target.files)}
+            />
+            <p className="mt-1 text-xs text-ink-faint">
+              {subiendoGaleria
+                ? 'Subiendo…'
+                : 'Fotos adicionales que se muestran en la ficha del producto en la web.'}
+            </p>
+          </div>
+
+          {/* Orden en la web */}
+          <div className="sm:max-w-xs">
+            <label className="label-faint mb-1.5 block">Orden en la web</label>
+            <input
+              type="number"
+              className={inputBase}
+              value={orden}
+              onChange={(e) => setOrden(Number(e.target.value))}
+            />
+            <p className="mt-1 text-xs text-ink-faint">Menor aparece primero en el catálogo.</p>
           </div>
 
           {/* Interruptores */}

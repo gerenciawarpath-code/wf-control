@@ -115,14 +115,14 @@ export default function Caja() {
 
       <Card>
         <Label>Total en caja</Label>
-        <div className="mt-2 text-4xl font-semibold tracking-tight text-accent">
+        <div className="dsp tnum mt-2 text-5xl font-extrabold tracking-tight text-accent">
           {cop(resumen.data.caja)}
         </div>
         <div className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-3">
           {(Object.keys(nombresMedio) as Medio[]).map((m) => (
             <div key={m}>
               <Label>{nombresMedio[m]}</Label>
-              <div className="mt-1 text-xl font-semibold tracking-tight">
+              <div className="dsp tnum mt-1 text-2xl font-bold tracking-tight">
                 {cop(porMedio.data?.[m].neto ?? 0)}
               </div>
               <div className="mt-1 text-xs text-ink-faint">

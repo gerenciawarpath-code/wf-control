@@ -21,14 +21,14 @@ export default function Kpis() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <Label>Ventas este mes</Label>
-          <div className="mt-2 text-3xl font-semibold tracking-tight text-accent">
+          <div className="dsp tnum mt-2 text-3xl font-bold tracking-tight text-accent">
             {cop(data.ventasMesActual)}
           </div>
           <div className="mt-1 text-sm text-ink-faint">valor de los pedidos del mes</div>
         </Card>
         <Card>
           <Label>Invertido en compras este mes</Label>
-          <div className="mt-2 text-3xl font-semibold tracking-tight text-negative">
+          <div className="dsp tnum mt-2 text-3xl font-bold tracking-tight text-negative">
             {cop(data.invertidoComprasMes)}
           </div>
           <div className="mt-1 text-sm text-ink-faint">pagado a proveedores</div>
@@ -36,7 +36,7 @@ export default function Kpis() {
         <Card>
           <Label>Crecimiento vs mes pasado</Label>
           <div
-            className={`mt-2 text-3xl font-semibold tracking-tight ${
+            className={`dsp tnum mt-2 text-3xl font-bold tracking-tight ${
               data.crecimientoMesActual === null
                 ? 'text-ink-faint'
                 : data.crecimientoMesActual >= 0
@@ -54,7 +54,7 @@ export default function Kpis() {
         </Card>
         <Card>
           <Label>Clientes nuevos este mes</Label>
-          <div className="mt-2 text-3xl font-semibold tracking-tight">
+          <div className="dsp tnum mt-2 text-3xl font-bold tracking-tight">
             {data.clientesNuevosMesActual}
           </div>
           <div className="mt-1 text-sm text-ink-faint">registrados en el sistema</div>
@@ -69,14 +69,14 @@ export default function Kpis() {
         <div className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-3">
           <div>
             <Label>Esta semana</Label>
-            <div className="mt-1 text-2xl font-semibold tracking-tight">
+            <div className="dsp tnum mt-1 text-2xl font-bold tracking-tight">
               {cop(data.proyectadoSemana)}
             </div>
             <div className="mt-1 text-sm text-ink-faint">próximos 7 días</div>
           </div>
           <div>
             <Label>Este mes</Label>
-            <div className="mt-1 text-2xl font-semibold tracking-tight">
+            <div className="dsp tnum mt-1 text-2xl font-bold tracking-tight">
               {cop(data.proyectadoMes)}
             </div>
             <div className="mt-1 text-sm text-ink-faint">de hoy a fin de mes</div>
@@ -84,7 +84,7 @@ export default function Kpis() {
           <div>
             <Label>Vencido sin cobrar</Label>
             <div
-              className={`mt-1 text-2xl font-semibold tracking-tight ${
+              className={`dsp tnum mt-1 text-2xl font-bold tracking-tight ${
                 data.vencidoPendiente > 0 ? 'text-negative' : ''
               }`}
             >

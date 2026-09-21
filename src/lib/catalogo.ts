@@ -204,6 +204,8 @@ export interface FichaInput {
   destacado: boolean
   visible: boolean
   foto_url: string | null
+  fotos: string[]
+  orden: number
 }
 
 export async function crearFicha(valores: FichaInput): Promise<string> {

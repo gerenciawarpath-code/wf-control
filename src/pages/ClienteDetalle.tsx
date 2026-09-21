@@ -132,7 +132,7 @@ export default function ClienteDetalle() {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <Label>Total comprado</Label>
-          <div className="mt-2 text-2xl font-semibold tracking-tight">{cop(c.total_comprado)}</div>
+          <div className="mt-2 dsp tnum text-2xl font-bold tracking-tight">{cop(c.total_comprado)}</div>
           <div className="mt-1 text-sm text-ink-faint">
             {c.num_pedidos === 1 ? '1 pedido' : `${c.num_pedidos} pedidos`}
           </div>
@@ -140,7 +140,7 @@ export default function ClienteDetalle() {
         <Card>
           <Label>Debe</Label>
           <div
-            className={`mt-2 text-2xl font-semibold tracking-tight ${c.deuda > 0 ? 'text-negative' : ''}`}
+            className={`mt-2 dsp tnum text-2xl font-bold tracking-tight ${c.deuda > 0 ? 'text-negative' : ''}`}
           >
             {cop(c.deuda)}
           </div>
@@ -148,7 +148,7 @@ export default function ClienteDetalle() {
         </Card>
         <Card>
           <Label>Recompra estimada</Label>
-          <div className="mt-2 text-2xl font-semibold tracking-tight">
+          <div className="mt-2 dsp tnum text-2xl font-bold tracking-tight">
             {c.fecha_recompra ? fmtFechaLarga(c.fecha_recompra) : '—'}
           </div>
           <div className="mt-1 text-sm text-ink-faint">según su último producto</div>

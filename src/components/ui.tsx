@@ -12,16 +12,6 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
   return <div className={`card ${className}`}>{children}</div>
 }
 
-export function CardHero({
-  children,
-  className = '',
-}: {
-  children: ReactNode
-  className?: string
-}) {
-  return <div className={`card-hero ${className}`}>{children}</div>
-}
-
 export function Label({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`label-faint ${className}`}>{children}</div>
 }

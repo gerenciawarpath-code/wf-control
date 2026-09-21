@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Sparkles } from 'lucide-react'
 import { preguntarAsistente, type RespuestaAsistente as TResp } from '../lib/asistente'
-import { Card, ErrorMsg, btnPrimario, inputBase } from './ui'
+import { ErrorMsg, btnPrimario, inputBase } from './ui'
 import RespuestaAsistente from './RespuestaAsistente'
 
 const sugerencias = [
@@ -39,15 +39,17 @@ export default function AsistenteCard() {
   }
 
   return (
-    <Card>
-      <h2 className="flex items-center gap-2 text-lg font-medium">
-        <Sparkles size={18} strokeWidth={1.75} className="text-accent" />
-        Asistente
-      </h2>
-      <p className="mt-1 text-sm text-ink-secondary">
+    <section className="panel asist">
+      <div className="asist-head">
+        <span className="spark">
+          <Sparkles size={15} strokeWidth={1.75} />
+        </span>
+        <h2>Asistente</h2>
+      </div>
+      <p className="mt-1 ml-9 text-sm text-ink-secondary">
         Pregúntale al negocio; responde con los datos reales.
       </p>
-      <form onSubmit={enviar} className="mt-3 flex gap-2">
+      <form onSubmit={enviar} className="mt-3.5 flex gap-2.5">
         <input
           className={inputBase}
           placeholder="¿Quién paga hoy?"
@@ -58,13 +60,13 @@ export default function AsistenteCard() {
           {cargando ? 'Pensando…' : 'Preguntar'}
         </button>
       </form>
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-2">
         {sugerencias.map((s) => (
           <button
             key={s}
             type="button"
             onClick={() => preguntar(s)}
-            className="rounded-full border border-line bg-card px-3 py-1 text-xs text-ink-secondary transition-colors duration-150 hover:bg-card3"
+            className="rounded-full border border-line-mid bg-transparent px-3.5 py-1.5 text-xs text-ink-secondary transition-colors duration-150 hover:border-accent hover:bg-accent-soft hover:text-ink"
           >
             {s}
           </button>
@@ -76,6 +78,6 @@ export default function AsistenteCard() {
         </div>
       )}
       {respuesta && <RespuestaAsistente respuesta={respuesta} />}
-    </Card>
+    </section>
   )
 }

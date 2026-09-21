@@ -100,7 +100,7 @@ export default function CompraDetalle() {
 
       <Card>
         <Label>Total de la compra</Label>
-        <div className="mt-2 text-3xl font-semibold tracking-tight text-negative">
+        <div className="mt-2 dsp tnum text-3xl font-bold tracking-tight text-negative">
           −{cop(c.total)}
         </div>
         {c.pedido_id && (
