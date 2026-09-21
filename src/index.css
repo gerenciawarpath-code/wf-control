@@ -1955,3 +1955,25 @@ th {
     margin-left: auto;
   }
 }
+
+/* Pedidos v2: monto en la fila (reusa .cli-row) */
+.ped-monto {
+  text-align: right;
+  flex-shrink: 0;
+}
+.ped-monto .tot {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+.ped-monto .est {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 1px;
+}
+.ped-monto .est.neg {
+  color: var(--danger-fg);
+}
+.ped-monto .est.pos {
+  color: var(--success-fg);
+}
