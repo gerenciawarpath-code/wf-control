@@ -1584,3 +1584,214 @@ th {
 }
 
 /* Login: fondo con un toque de marca */
+
+/* =====================================================================
+   Clientes v2 (lista con jerarquía). Solo apariencia.
+   ===================================================================== */
+.cli-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 719px) {
+  .cli-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+.cli-tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-md);
+}
+.cli-tile .lab {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+}
+.cli-tile .val {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  margin-top: 9px;
+  line-height: 1;
+}
+.cli-tile .sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+.cli-tile.alert .val {
+  color: var(--danger-fg);
+}
+.cli-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cli-filtros {
+  display: inline-flex;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 11px;
+  padding: 4px;
+  gap: 2px;
+  box-shadow: var(--shadow-sm);
+}
+.cli-filtros button {
+  border: 0;
+  background: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.cli-filtros .cnt {
+  font-size: 11px;
+  background: var(--surface-3);
+  color: var(--text-secondary);
+  border-radius: 20px;
+  padding: 1px 7px;
+  font-weight: 700;
+}
+.cli-filtros button.on {
+  background: var(--text-primary);
+  color: var(--surface-1);
+}
+.cli-filtros button.on .cnt {
+  background: rgba(255, 255, 255, 0.18);
+  color: inherit;
+}
+.cli-find {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 11px;
+  padding: 9px 13px;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-tertiary);
+}
+.cli-find input {
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  width: 100%;
+}
+.cli-lista {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.cli-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 120ms ease;
+}
+.cli-row:last-child {
+  border-bottom: 0;
+}
+.cli-row:hover {
+  background: var(--surface-2);
+}
+.cli-row.deuda {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--danger-fg) 6%, transparent), transparent 40%);
+}
+.cli-row.deuda::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--danger-fg);
+}
+.cli-row .cav {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+}
+.cli-row.deuda .cav {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+.cli-row .who {
+  min-width: 0;
+  flex: 1;
+}
+.cli-row .who b {
+  font-size: 14.5px;
+  font-weight: 600;
+  display: block;
+}
+.cli-row .who .meta {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+}
+.cli-row .money {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  text-align: right;
+}
+.cli-row .money.neg {
+  color: var(--danger-fg);
+}
+.chip-ok {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 20px;
+  white-space: nowrap;
+  background: var(--success-bg);
+  color: var(--success-fg);
+}
+.cli-row .chev {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+.grouphdr {
+  padding: 12px 18px 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border-subtle);
+}

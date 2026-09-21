@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { ChevronRight, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import { getClientesDetalle } from '../lib/data'
@@ -14,9 +15,23 @@ import {
   inputBase,
 } from '../components/ui'
 
+type Filtro = 'todos' | 'deuda' | 'aldia'
+
+function iniciales(nombre: string): string {
+  return (
+    nombre
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0].toUpperCase())
+      .join('') || '?'
+  )
+}
+
 export default function Clientes() {
   const { data, loading, error, reload } = useData(getClientesDetalle)
   const [q, setQ] = useState('')
+  const [filtro, setFiltro] = useState<Filtro>('todos')
   const [mostrarForm, setMostrarForm] = useState(false)
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
@@ -41,11 +56,43 @@ export default function Clientes() {
     reload()
   }
 
-  const filtrados = (data ?? []).filter(
+  const todos = data ?? []
+  const conDeuda = todos.filter((c) => c.deuda > 0)
+  const porCobrar = conDeuda.reduce((suma, c) => suma + c.deuda, 0)
+
+  const coincide = (c: (typeof todos)[number]) =>
+    c.nombre.toLowerCase().includes(q.trim().toLowerCase()) || (c.telefono ?? '').includes(q.trim())
+  const filtrados = todos.filter(
     (c) =>
-      c.nombre.toLowerCase().includes(q.trim().toLowerCase()) ||
-      (c.telefono ?? '').includes(q.trim()),
+      coincide(c) &&
+      (filtro === 'todos' || (filtro === 'deuda' ? c.deuda > 0 : c.deuda <= 0)),
   )
+  // Presentación: primero los que deben (mayor deuda arriba), después los al día.
+  const deben = filtrados.filter((c) => c.deuda > 0).sort((a, b) => b.deuda - a.deuda)
+  const alDia = filtrados.filter((c) => c.deuda <= 0)
+
+  const fila = (c: (typeof todos)[number]) => {
+    const debe = c.deuda > 0
+    const meta = [
+      c.telefono,
+      c.num_pedidos > 0 ? (c.num_pedidos === 1 ? '1 pedido' : `${c.num_pedidos} pedidos`) : null,
+    ].filter(Boolean)
+    return (
+      <Link key={c.id} to={`/clientes/${c.id}`} className={`cli-row${debe ? ' deuda' : ''}`}>
+        <span className="cav">{iniciales(c.nombre)}</span>
+        <div className="who">
+          <b>{c.nombre}</b>
+          {meta.length > 0 && <div className="meta">{meta.join(' · ')}</div>}
+        </div>
+        {debe ? (
+          <div className="money neg tnum">debe {cop(c.deuda)}</div>
+        ) : (
+          <span className="chip-ok">al día</span>
+        )}
+        <ChevronRight size={18} strokeWidth={1.8} className="chev" />
+      </Link>
+    )
+  }
 
   return (
     <div className="entra-lista space-y-4 sm:space-y-6">
@@ -94,46 +141,89 @@ export default function Clientes() {
         </Card>
       )}
 
-      <Card>
-        <input
-          className={inputBase}
-          placeholder="Buscar por nombre o teléfono"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
+      {!loading && !error && (
+        <div className="cli-tiles">
+          <div className="cli-tile">
+            <div className="lab">Clientes</div>
+            <div className="val tnum">{todos.length}</div>
+            <div className="sub">registrados</div>
+          </div>
+          <div className="cli-tile">
+            <div className="lab">Con deuda</div>
+            <div className="val tnum">{conDeuda.length}</div>
+            <div className="sub">de {todos.length} clientes</div>
+          </div>
+          <div className="cli-tile alert">
+            <div className="lab">Por cobrar</div>
+            <div className="val tnum">{cop(porCobrar)}</div>
+            <div className="sub">suma de lo que te deben</div>
+          </div>
+        </div>
+      )}
+
+      <div className="cli-bar">
+        <div className="cli-filtros" role="tablist">
+          {(
+            [
+              ['todos', 'Todos', todos.length],
+              ['deuda', 'Con deuda', conDeuda.length],
+              ['aldia', 'Al día', todos.length - conDeuda.length],
+            ] as [Filtro, string, number][]
+          ).map(([id, label, n]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={filtro === id}
+              className={filtro === id ? 'on' : ''}
+              onClick={() => setFiltro(id)}
+            >
+              {label} <span className="cnt">{n}</span>
+            </button>
+          ))}
+        </div>
+        <label className="cli-find">
+          <Search size={16} strokeWidth={2} />
+          <input
+            placeholder="Buscar por nombre o teléfono"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </label>
+      </div>
+
+      <div className="cli-lista">
         {loading ? (
-          <Cargando />
+          <div className="p-5">
+            <Cargando />
+          </div>
         ) : error ? (
-          <div className="mt-4">
+          <div className="p-5">
             <ErrorMsg>{error}</ErrorMsg>
           </div>
         ) : filtrados.length === 0 ? (
           <Vacio>
-            {q ? 'Ningún cliente coincide con la búsqueda.' : 'Aún no hay clientes. Crea el primero.'}
+            {q || filtro !== 'todos'
+              ? 'Ningún cliente coincide con la búsqueda.'
+              : 'Aún no hay clientes. Crea el primero.'}
           </Vacio>
         ) : (
-          <ul className="mt-2 divide-y divide-line">
-            {filtrados.map((c) => (
-              <li key={c.id}>
-                <Link
-                  to={`/clientes/${c.id}`}
-                  className="flex items-center gap-3 py-3 transition-opacity duration-150 hover:opacity-70"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{c.nombre}</div>
-                    {c.telefono && <div className="text-xs text-ink-faint">{c.telefono}</div>}
-                  </div>
-                  {c.deuda > 0 ? (
-                    <div className="text-sm font-medium text-negative">debe {cop(c.deuda)}</div>
-                  ) : (
-                    <div className="text-xs text-ink-faint">al día</div>
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <>
+            {deben.length > 0 && (
+              <>
+                {filtro === 'todos' && <div className="grouphdr">Con deuda · {deben.length}</div>}
+                {deben.map(fila)}
+              </>
+            )}
+            {alDia.length > 0 && (
+              <>
+                {filtro === 'todos' && <div className="grouphdr">Al día · {alDia.length}</div>}
+                {alDia.map(fila)}
+              </>
+            )}
+          </>
         )}
-      </Card>
+      </div>
     </div>
   )
 }

@@ -7,10 +7,22 @@ const ThemeContext = createContext<{ tema: Tema; alternar: () => void }>({
   alternar: () => {},
 })
 
+/**
+ * Claro por defecto. Un reset de una sola vez (bandera wf-theme-reset) devuelve a
+ * claro a quienes tenían oscuro guardado de antes; después el toggle manda.
+ * Misma lógica que el script de index.html (evita el flash).
+ */
 function temaInicial(): Tema {
-  const guardado = localStorage.getItem('wf-theme')
-  if (guardado === 'light' || guardado === 'dark') return guardado
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  try {
+    if (!localStorage.getItem('wf-theme-reset')) {
+      localStorage.setItem('wf-theme', 'light')
+      localStorage.setItem('wf-theme-reset', '1')
+      return 'light'
+    }
+    return localStorage.getItem('wf-theme') === 'dark' ? 'dark' : 'light'
+  } catch {
+    return 'light'
+  }
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

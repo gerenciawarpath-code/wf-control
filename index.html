@@ -14,14 +14,18 @@
       href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,500;0,600;0,700;0,800;1,800&display=swap"
     />
     <script>
-      // Aplica el tema guardado antes de pintar, para evitar el "flash"
+      // Tema claro por defecto; reset de una sola vez para quien tenía oscuro guardado.
+      // (misma lógica que src/lib/theme.tsx)
       try {
-        var t = localStorage.getItem('wf-theme')
-        if (t !== 'light' && t !== 'dark') {
-          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        if (!localStorage.getItem('wf-theme-reset')) {
+          localStorage.setItem('wf-theme', 'light')
+          localStorage.setItem('wf-theme-reset', '1')
         }
-        document.documentElement.dataset.theme = t
-      } catch (e) {}
+        document.documentElement.dataset.theme =
+          localStorage.getItem('wf-theme') === 'dark' ? 'dark' : 'light'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }
     </script>
   </head>
   <body>
