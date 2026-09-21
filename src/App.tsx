@@ -14,6 +14,7 @@ import Compras from './pages/Compras'
 import CompraNueva from './pages/CompraNueva'
 import CompraDetalle from './pages/CompraDetalle'
 import Productos from './pages/Productos'
+import PestanasProductos from './components/PestanasProductos'
 import Marcas from './pages/Marcas'
 import Catalogo from './pages/Catalogo'
 import CatalogoFicha from './pages/CatalogoFicha'
@@ -53,9 +54,9 @@ export default function App() {
             <Route path="compras" element={<Compras />} />
             <Route path="compras/nueva" element={<CompraNueva />} />
             <Route path="compras/:id" element={<CompraDetalle />} />
-            <Route path="productos" element={<Productos />} />
+            <Route path="productos" element={<PestanasProductos><Productos /></PestanasProductos>} />
             <Route path="marcas" element={<Marcas />} />
-            <Route path="catalogo" element={<Catalogo />} />
+            <Route path="catalogo" element={<PestanasProductos><Catalogo /></PestanasProductos>} />
             <Route path="catalogo/nueva" element={<CatalogoFicha />} />
             <Route path="catalogo/:id" element={<CatalogoFicha />} />
             <Route path="kpis" element={<Kpis />} />

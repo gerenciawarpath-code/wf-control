@@ -179,7 +179,7 @@ body {
 
 .titulo-pantalla {
   font-family: var(--font-display);
-  font-size: clamp(22px, 3vw, 26px);
+  font-size: clamp(24px, 3vw, 30px);
   font-weight: 800;
   letter-spacing: 0.01em;
   line-height: 1.15;
@@ -215,7 +215,7 @@ body {
   font-size: 15px;
   padding: 11px 22px;
   border: none;
-  border-radius: 999px;
+  border-radius: 10px;
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
   transition:
@@ -245,7 +245,7 @@ body {
   font-size: 14px;
   padding: 10px 20px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 150ms ease;
 }
@@ -285,7 +285,7 @@ body {
   font-size: 14px;
   padding: 10px 20px;
   border: 1px solid var(--danger-fg);
-  border-radius: 999px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 150ms ease;
 }
@@ -309,7 +309,7 @@ body {
   font-size: 15px;
   padding: 11px 22px;
   border: none;
-  border-radius: 999px;
+  border-radius: 10px;
   cursor: pointer;
   transition: filter 150ms ease;
 }
@@ -356,7 +356,7 @@ body {
   overflow-y: auto;
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 24px;
   box-shadow: var(--shadow-lg);
   animation: subir 250ms var(--ease-out) both;
@@ -385,7 +385,8 @@ body {
 .card {
   background: var(--surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
   padding: 20px;
 }
 @media (min-width: 640px) {
@@ -414,7 +415,7 @@ body {
   padding: 0 14px;
   background: var(--surface-2);
   border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border-radius: 11px;
   font-size: 15px;
   color: var(--text-primary);
   transition:
@@ -1532,3 +1533,54 @@ textarea.input-area:focus {
     flex-direction: column;
   }
 }
+
+/* Pestañas de pantalla (Productos y catálogo) */
+.tabs-pantalla {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-3);
+  border-radius: 12px;
+}
+.tabs-pantalla a {
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: 140ms ease;
+}
+.tabs-pantalla a.on {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* =====================================================================
+   Tablas y filas v2 (global, solo apariencia)
+   ===================================================================== */
+table {
+  border-collapse: collapse;
+}
+thead th {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+tbody tr {
+  transition: background-color 120ms ease;
+}
+tbody tr:hover {
+  background: var(--surface-2);
+}
+td,
+th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Login: fondo con un toque de marca */

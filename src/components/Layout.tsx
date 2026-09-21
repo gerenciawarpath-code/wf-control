@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
-  BookOpen,
   History,
   LayoutDashboard,
   LogOut,
@@ -25,15 +24,14 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { useTema } from '../lib/theme'
 
-const tabs: { to: string; label: string; icono: LucideIcon }[] = [
+const tabs: { to: string; label: string; icono: LucideIcon; tambien?: string }[] = [
   { to: '/', label: 'Inicio', icono: LayoutDashboard },
   { to: '/clientes', label: 'Clientes', icono: Users },
   { to: '/pedidos', label: 'Pedidos', icono: ShoppingBag },
   { to: '/caja', label: 'Caja', icono: Wallet },
   { to: '/compras', label: 'Compras', icono: ShoppingCart },
-  { to: '/productos', label: 'Productos', icono: Package },
+  { to: '/productos', label: 'Productos y catálogo', icono: Package, tambien: '/catalogo' },
   { to: '/marcas', label: 'Marcas', icono: Tags },
-  { to: '/catalogo', label: 'Catálogo', icono: BookOpen },
   { to: '/kpis', label: 'KPIs', icono: TrendingUp },
   { to: '/mensajes', label: 'Mensajes', icono: MessageCircle },
   { to: '/auditoria', label: 'Historial', icono: History },
@@ -87,7 +85,9 @@ export default function Layout() {
               key={t.to}
               to={t.to}
               end={t.to === '/'}
-              className={({ isActive }) => (isActive ? 'on' : '')}
+              className={({ isActive }) =>
+                isActive || (t.tambien && location.pathname.startsWith(t.tambien)) ? 'on' : ''
+              }
             >
               <t.icono size={18} strokeWidth={1.7} />
               {t.label}
