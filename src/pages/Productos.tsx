@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import { getProductos, subirFotoProducto } from '../lib/data'
@@ -19,6 +20,8 @@ import {
   inputBase,
 } from '../components/ui'
 
+type Filtro = 'todos' | 'activos' | 'inactivos'
+
 export default function Productos() {
   const { data, loading, error, reload } = useData(getProductos)
   const [editando, setEditando] = useState<Producto | 'nuevo' | null>(null)
@@ -31,6 +34,19 @@ export default function Productos() {
   const [guardando, setGuardando] = useState(false)
   const [errorForm, setErrorForm] = useState<string | null>(null)
   const [borrar, setBorrar] = useState<Producto | null>(null)
+  const [filtro, setFiltro] = useState<Filtro>('todos')
+  const [q, setQ] = useState('')
+
+  // Conteos y filtros de solo lectura sobre la lista ya cargada.
+  const todos = data ?? []
+  const nActivos = todos.filter((p) => p.activo).length
+  const nInactivos = todos.length - nActivos
+  const busca = q.trim().toLowerCase()
+  const visibles = todos.filter(
+    (p) =>
+      (busca === '' || p.nombre.toLowerCase().includes(busca)) &&
+      (filtro === 'todos' || (filtro === 'activos' ? p.activo : !p.activo)),
+  )
 
   const ganancia = precio - costo
   const previewFoto = fotoNueva ? URL.createObjectURL(fotoNueva) : fotoActual
@@ -171,6 +187,57 @@ export default function Productos() {
         </Card>
       )}
 
+      {!loading && !error && (
+        <>
+          <div className="cli-tiles">
+            <div className="cli-tile">
+              <div className="lab">Referencias</div>
+              <div className="val tnum">{todos.length}</div>
+              <div className="sub">productos registrados</div>
+            </div>
+            <div className="cli-tile">
+              <div className="lab">Activos</div>
+              <div className="val tnum" style={{ color: 'var(--success-fg)' }}>
+                {nActivos}
+              </div>
+              <div className="sub">disponibles para vender</div>
+            </div>
+            <div className="cli-tile">
+              <div className="lab">Inactivos</div>
+              <div className="val tnum">{nInactivos}</div>
+              <div className="sub">desactivados</div>
+            </div>
+          </div>
+
+          <div className="cli-bar">
+            <div className="cli-filtros" role="tablist">
+              {(
+                [
+                  ['todos', 'Todos', todos.length],
+                  ['activos', 'Activos', nActivos],
+                  ['inactivos', 'Inactivos', nInactivos],
+                ] as [Filtro, string, number][]
+              ).map(([id, label, n]) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={filtro === id}
+                  className={filtro === id ? 'on' : ''}
+                  onClick={() => setFiltro(id)}
+                >
+                  {label} <span className="cnt">{n}</span>
+                </button>
+              ))}
+            </div>
+            <label className="cli-find">
+              <Search size={16} strokeWidth={2} />
+              <input placeholder="Buscar producto…" value={q} onChange={(e) => setQ(e.target.value)} />
+            </label>
+          </div>
+        </>
+      )}
+
       <Card>
         {loading ? (
           <Cargando />
@@ -178,9 +245,11 @@ export default function Productos() {
           <ErrorMsg>{error}</ErrorMsg>
         ) : (data ?? []).length === 0 ? (
           <Vacio>Aún no hay productos. Crea el primero para poder registrar pedidos.</Vacio>
+        ) : visibles.length === 0 ? (
+          <Vacio>Ningún producto coincide con el filtro.</Vacio>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm" style={{ tableLayout: 'auto' }}>
+            <table className="w-full text-sm tnum" style={{ tableLayout: 'auto' }}>
               <thead>
                 <tr className="border-b border-line text-left">
                   <th className="label-faint py-2 pr-4 font-medium">Producto</th>
@@ -193,7 +262,7 @@ export default function Productos() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {(data ?? []).map((p) => (
+                {visibles.map((p) => (
                   <tr key={p.id} className={p.activo ? '' : 'opacity-60'}>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-3">
