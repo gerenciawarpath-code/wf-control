@@ -40,11 +40,13 @@ export default function Compras() {
   })
 
   // Resumen de solo lectura sobre las mismas compras que muestra la lista (sin filtros).
+  // Los ajustes (es_ajuste) siguen en la lista pero no cuentan en estas tarjetas.
   const todas = compras.data
+  const sinAjustes = todas.filter((c) => !c.es_ajuste)
   const mes = hoyISO().slice(0, 7)
-  const delMes = todas.filter((c) => c.fecha.startsWith(mes))
+  const delMes = sinAjustes.filter((c) => c.fecha.startsWith(mes))
   const totalMes = delMes.reduce((suma, c) => suma + c.total, 0)
-  const totalHistorico = todas.reduce((suma, c) => suma + c.total, 0)
+  const totalHistorico = sinAjustes.reduce((suma, c) => suma + c.total, 0)
   const nMedio = (m: string) => (m ? todas.filter((c) => c.medio === m).length : todas.length)
 
   return (
@@ -60,17 +62,17 @@ export default function Compras() {
         <div className="cli-tile">
           <div className="lab">Compras del mes</div>
           <div className="val tnum">{delMes.length}</div>
-          <div className="sub">de {todas.length} en total</div>
+          <div className="sub">de {sinAjustes.length} en total · no incluye ajustes</div>
         </div>
         <div className="cli-tile">
           <div className="lab">Total comprado del mes</div>
           <div className="val tnum">{cop(totalMes)}</div>
-          <div className="sub">suma de las compras del mes</div>
+          <div className="sub">suma de las compras del mes · no incluye ajustes</div>
         </div>
         <div className="cli-tile">
           <div className="lab">Total comprado</div>
           <div className="val tnum">{cop(totalHistorico)}</div>
-          <div className="sub">histórico, {todas.length === 1 ? '1 compra' : `${todas.length} compras`}</div>
+          <div className="sub">histórico, {sinAjustes.length === 1 ? '1 compra' : `${sinAjustes.length} compras`} · no incluye ajustes</div>
         </div>
       </div>
 
