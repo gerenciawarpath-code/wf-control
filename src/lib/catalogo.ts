@@ -125,12 +125,15 @@ export interface FichaResumen {
   precio_desde: number | null
   visible: boolean
   orden: number
+  /** Solo lectura: la ficha tiene descripción principal no vacía */
+  tiene_descripcion: boolean
 }
 
 interface FichaJoin {
   id: string
   nombre: string
   foto_url: string | null
+  descripcion: string | null
   tipo: CategoriaCatalogo | null
   visible: boolean
   orden: number
@@ -142,7 +145,7 @@ export async function getFichasResumen(): Promise<FichaResumen[]> {
   const [fichas, productos] = await Promise.all([
     supabase
       .from('catalogo_fichas')
-      .select('id, nombre, foto_url, tipo, visible, orden, marcas(nombre)')
+      .select('id, nombre, foto_url, descripcion, tipo, visible, orden, marcas(nombre)')
       .order('orden')
       .order('nombre'),
     supabase.from('productos').select('ficha_id, precio_venta, activo'),
@@ -175,6 +178,7 @@ export async function getFichasResumen(): Promise<FichaResumen[]> {
     precio_desde: minPrecio.get(f.id) ?? null,
     visible: f.visible,
     orden: f.orden,
+    tiene_descripcion: !!f.descripcion?.trim(),
   }))
 }
 
