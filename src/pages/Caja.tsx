@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Wallet } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, ChevronRight, Wallet } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useData } from '../lib/hooks'
 import { abrirComprobante, getAbonosFull, getComprasFull, getPedidosFull, getResumen } from '../lib/data'
 import { cop, fmtFecha } from '../lib/format'
 import type { Medio } from '../lib/types'
 import AbonoForm from '../components/AbonoForm'
-import { Card, Cargando, ErrorMsg, Label, Vacio, btnPrimario } from '../components/ui'
+import { Cargando, ErrorMsg, Vacio, btnPrimario } from '../components/ui'
 
 const nombresMedio: Record<Medio, string> = {
   bancolombia: 'Bancolombia',
@@ -45,6 +45,14 @@ interface Movimiento {
   comprobante: string | null
 }
 
+type FiltroMov = 'todos' | 'entradas' | 'salidas'
+
+const filtrosMov: { id: FiltroMov; label: string }[] = [
+  { id: 'todos', label: 'Todos' },
+  { id: 'entradas', label: 'Entradas' },
+  { id: 'salidas', label: 'Salidas' },
+]
+
 export default function Caja() {
   const resumen = useData(getResumen)
   const porMedio = useData(getPorMedio)
@@ -52,6 +60,7 @@ export default function Caja() {
   const compras = useData(getComprasFull)
   const pedidos = useData(getPedidosFull)
   const [mostrarForm, setMostrarForm] = useState(false)
+  const [filtroMov, setFiltroMov] = useState<FiltroMov>('todos')
 
   if (resumen.loading || porMedio.loading || abonos.loading || compras.loading || pedidos.loading)
     return <Cargando />
@@ -81,6 +90,16 @@ export default function Caja() {
     })),
   ].sort((a, b) => (a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : 0))
 
+  const nEntradas = movimientos.filter((m) => m.monto >= 0).length
+  const nSalidas = movimientos.length - nEntradas
+  const contarMov = (id: FiltroMov) =>
+    id === 'todos' ? movimientos.length : id === 'entradas' ? nEntradas : nSalidas
+  const movimientosVisibles = movimientos.filter((m) => {
+    if (filtroMov === 'entradas') return m.monto >= 0
+    if (filtroMov === 'salidas') return m.monto < 0
+    return true
+  })
+
   function recargar() {
     setMostrarForm(false)
     resumen.reload()
@@ -91,7 +110,7 @@ export default function Caja() {
   }
 
   return (
-    <div className="entra-lista space-y-4 sm:space-y-6">
+    <div className="caja entra-lista space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="titulo-pantalla">Caja</h1>
         {!mostrarForm && (
@@ -113,67 +132,137 @@ export default function Caja() {
         />
       )}
 
-      <Card>
-        <Label>Total en caja</Label>
-        <div className="dsp tnum mt-2 text-5xl font-extrabold tracking-tight text-accent">
-          {cop(resumen.data.caja)}
+      <div className="caja-top">
+        <div className="caja-hero">
+          <div className="eye">
+            <Wallet size={14} strokeWidth={2} />
+            Total en caja
+          </div>
+          <div className="big dsp tnum">{cop(resumen.data.caja)}</div>
+          <div className="note">Suma de Bancolombia, Nequi y Efectivo</div>
         </div>
-        <div className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-3">
-          {(Object.keys(nombresMedio) as Medio[]).map((m) => (
-            <div key={m}>
-              <Label>{nombresMedio[m]}</Label>
-              <div className="dsp tnum mt-1 text-2xl font-bold tracking-tight">
-                {cop(porMedio.data?.[m].neto ?? 0)}
+        <div className="caja-split">
+          <div className="r">
+            <span className="k">
+              <span className="d" style={{ background: 'var(--success-fg)' }} />
+              Ganancia repartible
+            </span>
+            <span className="v dsp tnum" style={{ color: 'var(--success-fg)' }}>
+              {cop(resumen.data.ganancia_repartible)}
+            </span>
+          </div>
+          <div className="r">
+            <span className="k">
+              <span className="d" style={{ background: 'var(--text-tertiary)' }} />
+              Para reponer
+            </span>
+            <span className="v dsp tnum">{cop(resumen.data.reponer)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="caja-medios">
+        {(Object.keys(nombresMedio) as Medio[]).map((m) => {
+          const d = porMedio.data?.[m] ?? { entradas: 0, salidas: 0, neto: 0 }
+          const enRojo = d.neto < 0
+          return (
+            <div key={m} className={`caja-medio${enRojo ? ' neg' : ''}`}>
+              <div className="mh">
+                <b>{nombresMedio[m].toUpperCase()}</b>
+                {enRojo && <span className="tag">en rojo</span>}
               </div>
-              <div className="mt-1 text-xs text-ink-faint">
-                <span className="text-positive">+{cop(porMedio.data?.[m].entradas ?? 0)}</span>{' '}
-                <span className="text-negative">−{cop(porMedio.data?.[m].salidas ?? 0)}</span>
+              <div className="bal dsp tnum">{cop(d.neto)}</div>
+              <div className="io">
+                <div className="in">
+                  Entró
+                  <span className="n dsp tnum">+{cop(d.entradas)}</span>
+                </div>
+                <div className="out">
+                  Salió
+                  <span className="n dsp tnum">−{cop(d.salidas)}</span>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </Card>
+          )
+        })}
+      </div>
 
-      <Card>
-        <h2 className="text-lg font-medium">Movimientos</h2>
-        {movimientos.length === 0 ? (
-          <Vacio
-            icono={<Wallet size={32} strokeWidth={1.75} />}
-            detalle="Los abonos entran y las compras salen; todo aparece aquí."
-          >
-            Aún no hay movimientos.
-          </Vacio>
-        ) : (
-          <ul className="mt-2 divide-y divide-line">
-            {movimientos.map((m) => (
-              <li key={m.id} className="flex flex-wrap items-center gap-3 py-3">
-                <div className="min-w-0 flex-1">
-                  <Link to={m.link} className="text-sm font-medium hover:text-accent">
-                    {m.titulo}
-                  </Link>
-                  <div className="text-xs text-ink-faint">
-                    {fmtFecha(m.fecha)} · {m.sub}
-                  </div>
-                </div>
-                {m.comprobante && (
-                  <button
-                    className="text-sm text-accent hover:text-accent-hover"
-                    onClick={() => abrirComprobante(m.comprobante!)}
-                  >
-                    Ver comprobante
-                  </button>
-                )}
-                <div
-                  className={`w-28 text-right text-sm font-medium ${m.monto >= 0 ? 'text-positive' : 'text-negative'}`}
-                >
-                  {m.monto >= 0 ? '+' : '−'}
-                  {cop(Math.abs(m.monto))}
-                </div>
-              </li>
+      <div className="cli-lista">
+        <div className="movs-head">
+          <h2 className="text-lg font-medium">Movimientos</h2>
+          <div className="cli-filtros" role="tablist">
+            {filtrosMov.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                role="tab"
+                aria-selected={filtroMov === f.id}
+                className={filtroMov === f.id ? 'on' : ''}
+                onClick={() => setFiltroMov(f.id)}
+              >
+                {f.label} <span className="cnt">{contarMov(f.id)}</span>
+              </button>
             ))}
-          </ul>
+          </div>
+        </div>
+
+        {movimientosVisibles.length === 0 ? (
+          <div className="p-5">
+            <Vacio
+              icono={<Wallet size={32} strokeWidth={1.75} />}
+              detalle={
+                filtroMov === 'todos'
+                  ? 'Los abonos entran y las compras salen; todo aparece aquí.'
+                  : undefined
+              }
+            >
+              {filtroMov === 'todos' ? 'Aún no hay movimientos.' : 'No hay movimientos con este filtro.'}
+            </Vacio>
+          </div>
+        ) : (
+          movimientosVisibles.map((m) => (
+            <Link key={m.id} to={m.link} className="cli-row">
+              <span
+                className={`grid h-9 w-9 flex-shrink-0 place-items-center rounded-[10px] ${
+                  m.monto >= 0 ? 'bg-positive-soft text-positive' : 'bg-negative-soft text-negative'
+                }`}
+              >
+                {m.monto >= 0 ? (
+                  <ArrowDownLeft size={16} strokeWidth={2.2} />
+                ) : (
+                  <ArrowUpRight size={16} strokeWidth={2.2} />
+                )}
+              </span>
+              <div className="who">
+                <b>{m.titulo}</b>
+                <div className="meta">
+                  {fmtFecha(m.fecha)} · {m.sub}
+                </div>
+              </div>
+              {m.comprobante && (
+                <button
+                  className="whitespace-nowrap text-sm text-accent hover:text-accent-hover"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    abrirComprobante(m.comprobante!)
+                  }}
+                >
+                  Ver comprobante
+                </button>
+              )}
+              <div
+                className={`dsp tnum whitespace-nowrap text-sm font-semibold ${
+                  m.monto >= 0 ? 'text-positive' : 'text-negative'
+                }`}
+              >
+                {m.monto >= 0 ? '+' : '−'}
+                {cop(Math.abs(m.monto))}
+              </div>
+              <ChevronRight size={18} strokeWidth={1.8} className="chev" />
+            </Link>
+          ))
         )}
-      </Card>
+      </div>
     </div>
   )
 }

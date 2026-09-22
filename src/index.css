@@ -1986,3 +1986,166 @@ th {
   background: var(--surface-1);
   box-shadow: var(--shadow-sm);
 }
+
+/* =====================================================================
+   Caja v2 (Fase F). Solo apariencia — mismos datos de resumen_general
+   y caja_por_medio, sin recalcular nada.
+   ===================================================================== */
+
+.caja-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+.caja-hero {
+  background: linear-gradient(120deg, var(--side), var(--side-2));
+  color: var(--side-ink);
+  border-radius: var(--radius-hero);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.caja-hero .eye {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--side-mut);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.caja-hero .big {
+  font-weight: 800;
+  font-size: 46px;
+  line-height: 1;
+  margin-top: 10px;
+  letter-spacing: 0.01em;
+}
+.caja-hero .note {
+  color: var(--side-mut);
+  font-size: 12.5px;
+  margin-top: 10px;
+}
+.caja-split {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-hero);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6px 20px;
+}
+.caja-split .r {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  gap: 10px;
+}
+.caja-split .r + .r {
+  border-top: 1px solid var(--border-subtle);
+}
+.caja-split .r .k {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.caja-split .r .k .d {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.caja-split .r .v {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.caja-medios {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.caja-medio {
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-md);
+}
+.caja-medio.neg {
+  border-color: color-mix(in srgb, var(--danger-fg) 35%, var(--border-subtle));
+}
+.caja-medio .mh {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.caja-medio .mh b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.caja-medio .tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--danger-fg);
+  background: var(--danger-bg);
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.caja-medio .bal {
+  font-weight: 800;
+  font-size: 24px;
+  margin-top: 8px;
+}
+.caja-medio.neg .bal {
+  color: var(--danger-fg);
+}
+.caja-medio .io {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--border-subtle);
+}
+.caja-medio .io div {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.caja-medio .io .n {
+  font-weight: 700;
+  font-size: 14px;
+  display: block;
+  margin-top: 1px;
+}
+
+.movs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  flex-wrap: wrap;
+}
+.movs-head h2 {
+  margin: 0;
+}
+
+@media (max-width: 1000px) {
+  .caja-top {
+    grid-template-columns: 1fr;
+  }
+  .caja-medios {
+    grid-template-columns: 1fr;
+  }
+}
