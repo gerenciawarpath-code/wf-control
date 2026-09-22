@@ -2149,3 +2149,66 @@ th {
     grid-template-columns: 1fr;
   }
 }
+
+/* =====================================================================
+   Marcas v2. Solo apariencia — misma tabla, mismos ids y mutaciones.
+   ===================================================================== */
+
+.marcas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+}
+.marca-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease;
+}
+.marca-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-default);
+}
+.marca-card.oculta {
+  opacity: 0.6;
+}
+.marca-card .mc-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.marca-card .mc-nombre {
+  font-size: 14.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.marca-card .mc-pais {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 1px;
+}
+.marca-card .mc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+.marca-card .mc-fichas {
+  font-size: 12px;
+  color: var(--text-secondary);
+}

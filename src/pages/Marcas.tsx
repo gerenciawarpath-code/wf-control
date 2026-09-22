@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Search } from 'lucide-react'
 import { useData } from '../lib/hooks'
 import {
   actualizarMarca,
@@ -22,6 +23,8 @@ import {
   inputBase,
 } from '../components/ui'
 
+type Filtro = 'todas' | 'visibles' | 'ocultas'
+
 export default function Marcas() {
   const { data, loading, error, reload } = useData(getMarcasConConteo)
   const [editando, setEditando] = useState<Marca | 'nueva' | null>(null)
@@ -34,9 +37,23 @@ export default function Marcas() {
   const [logoNuevo, setLogoNuevo] = useState<File | null>(null)
   const [guardando, setGuardando] = useState(false)
   const [errorForm, setErrorForm] = useState<string | null>(null)
+  const [filtro, setFiltro] = useState<Filtro>('todas')
+  const [q, setQ] = useState('')
 
   const slug = generarSlug(nombre)
   const previewLogo = logoNuevo ? URL.createObjectURL(logoNuevo) : logoActual
+
+  // Resumen y filtros de solo lectura sobre las marcas ya cargadas.
+  const todas = data ?? []
+  const nVisibles = todas.filter((m) => m.visible).length
+  const nOcultas = todas.length - nVisibles
+  const totalFichas = todas.reduce((suma, m) => suma + m.fichas, 0)
+  const busca = q.trim().toLowerCase()
+  const visibles = todas.filter(
+    (m) =>
+      (busca === '' || m.nombre.toLowerCase().includes(busca)) &&
+      (filtro === 'todas' || (filtro === 'visibles' ? m.visible : !m.visible)),
+  )
 
   function abrirForm(m: Marca | 'nueva') {
     setEditando(m)
@@ -192,58 +209,105 @@ export default function Marcas() {
         </Card>
       )}
 
-      <Card>
-        {loading ? (
-          <Cargando />
-        ) : error ? (
-          <ErrorMsg>{error}</ErrorMsg>
-        ) : (data ?? []).length === 0 ? (
-          <Vacio>Aún no hay marcas. Crea la primera para agrupar tus fichas.</Vacio>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm" style={{ tableLayout: 'auto' }}>
-              <thead>
-                <tr className="border-b border-line text-left">
-                  <th className="label-faint py-2 pr-4 font-medium">Marca</th>
-                  <th className="label-faint py-2 pr-4 font-medium">País</th>
-                  <th className="label-faint py-2 pr-4 text-right font-medium">Fichas</th>
-                  <th className="label-faint py-2 pr-4 font-medium">Estado</th>
-                  <th className="py-2" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {(data ?? []).map((m: MarcaConConteo) => (
-                  <tr key={m.id} className={m.visible ? '' : 'opacity-60'}>
-                    <td className="py-3 pr-4">
-                      <div className="flex items-center gap-3">
-                        <ProductoThumb url={m.logo_url} size={36} />
-                        <span className="font-medium">{m.nombre}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 pr-4 text-ink-secondary">{m.pais ?? '—'}</td>
-                    <td className="py-3 pr-4 text-right tabular-nums">{m.fichas}</td>
-                    <td className="py-3 pr-4">
-                      <Badge tono={m.visible ? 'verde' : 'neutro'}>
-                        {m.visible ? 'visible' : 'oculta'}
-                      </Badge>
-                    </td>
-                    <td className="py-3">
-                      <div className="flex justify-end whitespace-nowrap">
-                        <button
-                          className="text-sm text-accent hover:text-accent-hover"
-                          onClick={() => abrirForm(m)}
-                        >
-                          Editar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {!loading && !error && todas.length > 0 && (
+        <>
+          <div className="cli-tiles">
+            <div className="cli-tile">
+              <div className="lab">Marcas</div>
+              <div className="val tnum">{todas.length}</div>
+              <div className="sub">{nVisibles} visibles en la web</div>
+            </div>
+            <div className="cli-tile">
+              <div className="lab">Visibles</div>
+              <div className="val tnum" style={{ color: 'var(--success-fg)' }}>
+                {nVisibles}
+              </div>
+              <div className="sub">en la vitrina web</div>
+            </div>
+            <div className="cli-tile">
+              <div className="lab">Fichas</div>
+              <div className="val tnum">{totalFichas}</div>
+              <div className="sub">en total, todas las marcas</div>
+            </div>
           </div>
-        )}
-      </Card>
+
+          <div className="cli-bar">
+            <div className="cli-filtros" role="tablist">
+              {(
+                [
+                  ['todas', 'Todas', todas.length],
+                  ['visibles', 'Visibles', nVisibles],
+                  ['ocultas', 'Ocultas', nOcultas],
+                ] as [Filtro, string, number][]
+              ).map(([id, label, n]) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={filtro === id}
+                  className={filtro === id ? 'on' : ''}
+                  onClick={() => setFiltro(id)}
+                >
+                  {label} <span className="cnt">{n}</span>
+                </button>
+              ))}
+            </div>
+            <label className="cli-find">
+              <Search size={16} strokeWidth={2} />
+              <input
+                placeholder="Buscar marca…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+            </label>
+          </div>
+        </>
+      )}
+
+      {loading ? (
+        <Card>
+          <Cargando />
+        </Card>
+      ) : error ? (
+        <Card>
+          <ErrorMsg>{error}</ErrorMsg>
+        </Card>
+      ) : todas.length === 0 ? (
+        <Card>
+          <Vacio>Aún no hay marcas. Crea la primera para agrupar tus fichas.</Vacio>
+        </Card>
+      ) : visibles.length === 0 ? (
+        <Card>
+          <Vacio>Ninguna marca coincide con el filtro.</Vacio>
+        </Card>
+      ) : (
+        <div className="marcas-grid">
+          {visibles.map((m: MarcaConConteo) => (
+            <button
+              key={m.id}
+              type="button"
+              className={`marca-card${m.visible ? '' : ' oculta'}`}
+              onClick={() => abrirForm(m)}
+            >
+              <div className="mc-top">
+                <ProductoThumb url={m.logo_url} size={48} />
+                <div className="min-w-0">
+                  <div className="mc-nombre">{m.nombre}</div>
+                  {m.pais && <div className="mc-pais">{m.pais}</div>}
+                </div>
+              </div>
+              <div className="mc-foot">
+                <span className="mc-fichas">
+                  {m.fichas} {m.fichas === 1 ? 'ficha' : 'fichas'}
+                </span>
+                <Badge tono={m.visible ? 'verde' : 'neutro'}>
+                  {m.visible ? 'visible' : 'oculta'}
+                </Badge>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
